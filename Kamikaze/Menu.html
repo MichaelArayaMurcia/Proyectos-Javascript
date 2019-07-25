@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html class="precarga">
+<!------------------------------------- Cabeza ------------------------------------>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Kamikaze </title>
+  <style media="screen">
+  </style>
+  <link rel="stylesheet" href="./css/Style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" href="imagenes/Logo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-red.min.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script src="jquery.js"></script>   
+  <script src="index.js"></script> 
+  </head>
+<!------------------------------------- Navegación -------------------------------->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+          <a class="nav-link" href="index.html"> Inicio <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="Menu.html"> Menu <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="Nosotros.html"> Nosotros <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="Registrarse/Registro.html"> Registrarse <span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+<!------------------------------------- Cuerpo ------------------------------------>
+  <body style="background-color: brown">
+  <audio autoplay loop>
+  <source src="musica/GoldenBoy.wav" type="audio/wav" >
+  </audio>
+  <div class="box" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+  <div class="card" style="background-color: yellow;">
+<!------------------------------------- Diseño de la pagina ----------------------->
+  <div class="menu"  class="col-xs-10 col-sm-6 col-md-4 producto">
+  <header style="text-align:center;">                                    
+  <h1 style="color:rgb(0, 102, 255)">kamikaze </h1>
+  </header>
+<!------------------------------------- Productos --------------------------------->
+  <div class="productos" class="col-xs-10 col-sm-6 col-md-4 producto">
+  </div> 
+<!------------------------------------- Producto 1 -------------------------------->
+  <div class="row center-xs" >
+  <div class="col-xs-10 col-sm-6 col-md-4 producto">
+  <div class="cardss animated fadeInUp delay-1" z-index=0 >
+  <img src="imagenes/cupcakes.jpg" alt="Cupcakes" id="objeto1">                                              
+  <h3> Cupcakes </h3>
+  <p> 10$ </p> 
+  </div>
+  </div> 
+<!------------------------------------- Producto 2 -------------------------------->
+  <div class="col-xs-10 col-sm-6 col-md-4 producto ">
+  <div class="cardss animated fadeInUp delay-2 "z-index=0>
+  <img src="imagenes/pan.jpg" alt="Pan" id="objeto2">
+  <h3> Pan </h3>
+  <p> 2$ </p>
+  </div>
+  </div>
+<!------------------------------------- Producto 3 -------------------------------->
+  <div class="col-xs-10 col-sm-6 col-md-4 producto">
+  <div class="cardss animated fadeInUp delay-3" z-index=0>
+  <img  src="imagenes/pastel.jpg" alt="Pastel" id="objeto3">
+  <h3> Pastel </h3>
+  <p> 10$ </p>  
+  </div>
+  </div>
+<!------------------------------------- Producto 4 -------------------------------->
+  <div class="col-xs-10 col-sm-6 col-md-4 producto">
+  <div class="cardss animated fadeInUp delay-4" z-index=0>
+  <img src="imagenes/pancakes.jpg" alt="Pancakes" id="objeto4">
+  <h3> Pancakes </h3>
+  <p> 3$ </p>  
+  </div>
+  </div>
+<!------------------------------------- Producto 5 -------------------------------->
+  <div class="col-xs-10 col-sm-6 col-md-4 producto">
+  <div class="cardss animated fadeInUp delay-5" z-index=0>
+  <img src="imagenes/arrollados.jpg" alt="Arrollados" id="objeto5">
+  <h3> Arrollados </h3>
+  <p> 4$ </p>  
+  </div>
+  </div>  
+<!------------------------------------- Scripts ----------------------------------->
+  </div>
+  </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+<!------------------------------------- Pié de página ----------------------------->
+  <footer >
+  <a href="https://Facebook.com" class="fa fa-facebook"></a>
+  <a href="https://Twitter.com" class="fa fa-twitter"></a>      
+  <center>
+  <h1> &copy Derechos Reservados 2018</h1>
+  </center>                 
+  </footer>
+
+</html>

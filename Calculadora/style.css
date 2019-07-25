@@ -1,0 +1,21 @@
+body {
+    background: #999;
+}
+
+.Layout {
+    text-align: center;
+    display: inline-block;
+    border: solid #bbb;
+    background: #bbb;
+    margin-left: 40%;
+    margin-top: 10%;
+}
+
+button {
+    padding: 10px;
+    margin-left: 0;
+    width: 50px;
+    height: 40px;
+    font-size: 18px;
+    background: #bbb;
+}

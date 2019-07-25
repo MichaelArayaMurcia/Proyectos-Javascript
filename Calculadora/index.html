@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Calculadora</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="Layout">
+        <input type="text" readOnly id="operacion" value=""><br>
+        <button value="C" onclick="limpiar(this.value)"> C </button>
+        <button value="DEL" onclick="limpiar(this.value)"> DEL </button>
+        <button value="%" onclick="insertar(this.value)"> % </button>
+        <button value="/" onclick="insertar(this.value)"> / </button><br>
+        <button value="7" onclick="insertar(this.value)"> 7 </button>
+        <button value="8" onclick="insertar(this.value)"> 8 </button>
+        <button value="9" onclick="insertar(this.value)"> 9 </button>
+        <button value="*" onclick="insertar(this.value)"> * </button><br>
+        <button value="4" onclick="insertar(this.value)"> 4 </button>
+        <button value="5" onclick="insertar(this.value)"> 5 </button>
+        <button value="6" onclick="insertar(this.value)"> 6 </button>
+        <button value="-" onclick="insertar(this.value)"> - </button><br>
+        <button value="1" onclick="insertar(this.value)"> 1 </button>
+        <button value="2" onclick="insertar(this.value)"> 2 </button>
+        <button value="3" onclick="insertar(this.value)"> 3 </button>
+        <button value="+" onclick="insertar(this.value)"> + </button><br>
+        <button value="." onclick="insertar(this.value)"> . </button>
+        <button value="0" onclick="insertar(this.value)"> 0 </button>
+        <button value="=" onclick="calcular()"> = </button>
+    </div>
+    <script type="text/javascript" src="main.js"></script>
+</body>
+</html>
