@@ -26,7 +26,7 @@ class Nave{
         if(this.x + this.largo > juego.largo || this.x < 0){
             this.x += -this.dx;
         }
-        rect(this.x,this.y,this.largo,this.ancho);
+        image(ship,this.x,this.y,this.largo,this.ancho);
     }
 }
 
@@ -38,8 +38,7 @@ class Enemigo{
         this.ancho = 20;
     }
     show(){
-        fill(0,255,0);
-        rect(this.x,this.y,this.largo,this.ancho);
+        image(enemy,this.x,this.y,this.largo,this.ancho);
     }
     update(){
         if (juego.direccion === true){
@@ -60,8 +59,7 @@ class Bala{
         this.hit = false;
     }
     show(){
-        fill(255,0,0);
-        rect(this.x,this.y,this.largo,this.ancho);
+        image(laser,this.x,this.y,this.largo,this.ancho);
     }
     update(){
         this.y -= juego.velocidad; 
@@ -106,7 +104,7 @@ function destruir(){
 }
 
 function actualizar(){
-    background(0);
+    image(backgrounds,0,0,juego.largo,juego.ancho);
     nave.show();
     destruir();
     for (let i in juego.enemigos){
@@ -151,6 +149,13 @@ function keyReleased(){
     if (key != ' ') {
         nave.dx = 0;
     }
+}
+
+function preload(){
+    backgrounds = loadImage("https://i.ibb.co/k9QBgj7/purple.png");
+    ship = loadImage("https://i.ibb.co/qWjf46n/player-Ship1-red.png");
+    enemy = loadImage("https://i.ibb.co/9psQc0r/enemy-Green5.png");
+    laser = loadImage("https://i.ibb.co/F0bYvdD/laser-Red03.png");
 }
 
 function setup(){
