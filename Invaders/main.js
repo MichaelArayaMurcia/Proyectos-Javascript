@@ -5,7 +5,9 @@ class Juego{
         this.velocidad = 3;
         this.columnaenemigos = 5;
         this.filadeenemigos = 3;
+        this.balas = 3;
         this.direccion = false;
+        this.disparo = false;
         this.enemigos = [];
     }
 }
@@ -75,16 +77,6 @@ function crearenemigos(){
     }
 }
 
-function disparar(){
-    for(let i in nave.balas){
-        if(nave.balas[i].hit === true){
-            nave.balas.splice(i,1);
-        }
-        else {
-            nave.balas[i].update();
-        }
-    }
-}
 
 function destruir(){
     for(let j in nave.balas){
@@ -97,8 +89,12 @@ function destruir(){
             }
         }
         if((nave.balas[j].y + nave.balas[j].largo) < 0){
-            console.log("Bala eliminada");
             nave.balas[j].hit = true;
+        }
+    }
+    for(let j in nave.balas){
+        if(nave.balas[j].hit === true){
+            nave.balas.splice(j,1);
         }
     }
 }
@@ -107,13 +103,13 @@ function actualizar(){
     background(0);
     nave.show();
     destruir();
-    disparar();
     for (let i in juego.enemigos){
         juego.enemigos[i].show();
         juego.enemigos[i].update();
     }
     for(let j in nave.balas){
         nave.balas[j].show();
+        nave.balas[j].update();
     }
     if(juego.enemigos.length > 0){
         if(juego.enemigos[0].x < 0 || 
@@ -125,6 +121,18 @@ function actualizar(){
     text("El numero de enemigos es: " + juego.enemigos.length,0,220);
 }
 
+function touchStarted(){
+    bala = new Bala();
+    nave.balas.push(bala);
+    for(let i  in nave.balas){
+        nave.balas[i].update();
+    }  
+}
+
+function touchMoved(){
+    nave.x = mouseX;
+}
+
 function keyPressed(){
     if(keyCode == RIGHT_ARROW){
         nave.dx += juego.velocidad; 
@@ -133,10 +141,9 @@ function keyPressed(){
         nave.dx -= juego.velocidad;
     } 
     else if(keyCode == UP_ARROW){
-        bala = new Bala();
-        nave.balas.push(bala);
-        for(let i  in nave.balas){
-            nave.balas[i].update();
+        if(nave.balas.length < juego.balas){
+            bala = new Bala();
+            nave.balas.push(bala);
         }
     }
 }
