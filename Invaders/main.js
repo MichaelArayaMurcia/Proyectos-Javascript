@@ -76,20 +76,18 @@ function crearenemigos(){
 }
 
 function disparar(){
-    if(nave.balas.length > 0){
-        for(let i in nave.balas){
-            if(nave.balas[i].hit === true){
-                nave.balas.splice(i,1);
-            }
-            else {
-                nave.balas[i].update();
-            }
+    for(let i in nave.balas){
+        if(nave.balas[i].hit === true){
+            nave.balas.splice(i,1);
+        }
+        else {
+            nave.balas[i].update();
         }
     }
 }
 
 function destruir(){
-    for (let j = nave.balas.length - 1; j >= 0; j--) {
+    for(let j in nave.balas){
         for(let i in juego.enemigos){
             if(nave.balas[j].y < juego.enemigos[i].y + juego.enemigos[i].largo && 
                 nave.balas[j].x < juego.enemigos[i].x + juego.enemigos[i].ancho &&
@@ -137,7 +135,7 @@ function keyPressed(){
     else if(keyCode == UP_ARROW){
         bala = new Bala();
         nave.balas.push(bala);
-        for(let i = 0; i < nave.balas.length;i++){
+        for(let i  in nave.balas){
             nave.balas[i].update();
         }
     }
