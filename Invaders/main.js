@@ -77,6 +77,12 @@ function crearenemigos(){
     }
 }
 
+function disparar(){
+    if(nave.balas.length < juego.balas){
+        bala = new Bala();
+        nave.balas.push(bala);
+    }   
+}
 
 function destruir(){
     for(let j in nave.balas){
@@ -122,11 +128,7 @@ function actualizar(){
 }
 
 function touchStarted(){
-    bala = new Bala();
-    nave.balas.push(bala);
-    for(let i  in nave.balas){
-        nave.balas[i].update();
-    }  
+    disparar();
 }
 
 function touchMoved(){
@@ -141,10 +143,7 @@ function keyPressed(){
         nave.dx -= juego.velocidad;
     } 
     else if(keyCode == UP_ARROW){
-        if(nave.balas.length < juego.balas){
-            bala = new Bala();
-            nave.balas.push(bala);
-        }
+        disparar();
     }
 }
 
