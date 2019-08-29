@@ -1,45 +1,22 @@
-function Stopwatch() { 
-    let startTime, endTime, running, duration = 0;
+//La idea del insertion sort es comparar cada uno de los elementos para
+//ordenarlos
 
-    Object.defineProperty(this, 'duration', {
-      get: function() { return duration; }
-    });
-    Object.defineProperty(this,'startTime',{
-      get: function() { return startTime}
-    });
-    Object.defineProperty(this,'endTime',{
-        get: function() { return endTime}
-    });
-    Object.defineProperty(this,'running',{
-        get: function() { return running}
-    });
 
-  }
-//-----------------------------------------------------------
-  Stopwatch.prototype.start = function() {
-    if (this.running) 
-      throw new Error('Stopwatch has already started.');
-    
-    this.running = true; 
+let arreglos = [1,123,32,12];
 
-    this.startTime = new Date();
-  };
 
-  Stopwatch.prototype.stop = function() {
-    if (!this.running) 
-      throw new Error('Stopwatch is not started.');
+function ordenar(arreglo){
+    for (let i = 1; i < arreglo.length;i++) {
+    	j = i-1;
+    	while (j >= 0 && arreglo[i] < arreglo[j]){
+    		arreglo[j+1] = arreglo[j];
+    		j -= 1;
+    	}
+    	arreglo[j + 1] = arreglo[i];
+    }
+    return arreglo
+}
 
-    this.running = false; 
-      
-    this.endTime = new Date();
+arreglo_ordenado = ordenar(arreglos);
 
-    const seconds = (endTime.getTime() - startTime.getTime()) / 1000;
-    this.duration += seconds; 
-  };
-
-  Stopwatch.prototype.reset = function() { 
-    this.startTime = null;
-    this.endTime = null;
-    this.running = false; 
-    this.duration = 0; 
-  };
+console.log(arreglo_ordenado);
