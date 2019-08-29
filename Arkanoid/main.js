@@ -23,56 +23,64 @@ class Jugador{
 }
 
 class Bola{
-  constructor(x,y,largo,ancho){
-    this.x = 200;
-    this.y = 200;
-    this.largo = 10;
-    this.ancho = 10; 
-    
-    this.dx = 1;
-    this.dy = 2;
+    constructor(){
+        this.x = 0;
+        this.y = 0;
+        this.largo = 10;
+        this.ancho = 10; 
+        
+        this.dx = 1;
+        this.dy = -2;
   }
-  mostrar(){
-    this.x += bola.dx;
-    this.y += bola.dy;
-    image(bolas,this.x,this.y,this.largo,this.ancho);
+    mostrar(){
+        this.x += bola.dx;
+        this.y += bola.dy;
+        image(bolas,this.x,this.y,this.largo,this.ancho);
   }
-  rebotar(){
-    //------------------ Vertical -------------
-    if(this.y > juego.ancho){
-         this.x = 200;
-         this.y = 200;
-         jugador.vidas -= 1;
-    }
-    else if(this.y < 0){
-        this.dy = -this.dy;
-    }
-    //------------------ Horizontal -----------
-    else if(this.x + this.largo > juego.largo || this.x < 0){
-        this.dx = -this.dx;
-    }
-    //------------------ Jugador --------------
-    else if(this.x >= jugador.x && 
-    this.x <= (jugador.x + jugador.largo) && this.y + this.ancho >= jugador.y &&this.y < (jugador.y + jugador.ancho)){
-        this.dy = -this.dy;
-    }
+    rebotar(){
+        //------------------ Vertical -------------
+        if(this.y > juego.ancho){
+             this.x = 200;
+             this.y = 200;
+             jugador.vidas -= 1;
+        }
+        else if(this.y < 0){
+            this.dy = -this.dy;
+        }
+        //------------------ Horizontal -----------
+        else if(this.x + this.largo > juego.largo || this.x < 0){
+            this.dx = -this.dx;
+        }
+        //------------------ Jugador --------------
+        else if(this.x >= jugador.x && 
+        this.x <= (jugador.x + jugador.largo) && this.y + this.ancho >= jugador.y &&this.y < (jugador.y + jugador.ancho)){
+            this.dy = -this.dy;
+        }
+  }
+  //---------------------------------------------
+    chocar(brick){
+      if(this.x < brick.x + brick.largo  && 
+            this.x + this.largo  > brick.x && 
+            this.y < brick.y + brick.ancho && 
+            this.y + brick.ancho > brick.y){
+          return true;
+      }
   }
   //------------------ Romper bloques -----------
-  romper(){
-    for(let i in juego.bricks){
-         if (this.x < juego.bricks[i].x + juego.bricks[i].largo  && 
-             this.x + this.largo  > juego.bricks[i].x && 
-             this.y < juego.bricks[i].y + juego.bricks[i].ancho && 
-             this.y + juego.bricks[i].ancho > juego.bricks[i].y) 
-             {
-		     this.dy = -this.dy;
-             jugador.puntaje += 1;
-            juego.bricks.splice(i,1);  
-		    }
+    romper(){
+        for(let i in juego.bricks){
+            let brick = juego.bricks[i];
+            if (this.chocar(brick) && brick.comodin === false){
+                this.dy = -this.dy;
+                jugador.puntaje += 1;
+                juego.bricks.splice(i,1);  
+            }
+            else if (this.chocar(brick) && brick.comodin === true){
+                brick.caida = true;
+            }
         }
     }
 }
-
 class Brick{
   constructor(){
     this.x = 0;
@@ -85,6 +93,25 @@ class Brick{
     image(this.color,this.x,this.y,this.largo,this.ancho); 
   }
 
+}
+
+class Brick_no_comodin extends Brick{
+    constructor(){
+        super();
+        this.comodin = false;
+    }
+}
+
+class Brick_comodin extends Brick{
+    constructor(){
+        super();
+        this.comodin = true;
+        this.hit = false;
+        this.caida = false;
+    }
+    caer(){
+        this.y += 1;
+    };
 }
 
 class Juego{
@@ -100,6 +127,7 @@ class Juego{
         this.gameover = false;
         this.disparo = false;
         this.colores = [amarillo,azul,rojo,verde,cafe,gris,morado,naranja];
+        this.colores_comodines = [rojo_roto,azul_roto,amarillo_roto,verde_roto];
         this.bricks = [];
     }
     
@@ -121,43 +149,62 @@ class Bala{
     }
 }
 
-//-------------------------- 
+
 function preload(){
-  menu = loadImage('https://i.ibb.co/pw16gV3/Barra-removebg-preview-removebg-preview.png');
-  //-----------------------------------------------------------------
-  base = loadImage('https://i.ibb.co/mzPj67g/base.png');
-  bolas = loadImage('https://i.ibb.co/qCP3MYV/58-Breakout-Tiles.png');
-  tabla = loadImage('https://i.ibb.co/ThPDzPW/50-Breakout-Tiles.png');
-  vida = loadImage('https://i.ibb.co/m8wVTJY/60-Breakout-Tiles.png');
-  estrellas = loadImage('https://i.ibb.co/FqsYsh8/59-Breakout-Tiles.png');
-  laser = loadImage("https://i.ibb.co/F0bYvdD/laser-Red03.png");
-  //-------------------------- Bricks --------------------
-  amarillo = loadImage('https://i.ibb.co/YNZKGND/13-Breakout-Tiles.png');
-  azul = loadImage('https://i.ibb.co/K69qmf9/11-Breakout-Tiles.png');
-  rojo = loadImage('https://i.ibb.co/pyGNmz9/07-Breakout-Tiles.png');
-  cafe = loadImage('https://i.ibb.co/RT7MttS/19-Breakout-Tiles.png');
-  //------------------------------------------------------
-  gris = loadImage('https://i.ibb.co/7WWzPw3/17-Breakout-Tiles.png');
-  verde = loadImage('https://i.ibb.co/JsMPxcQ/15-Breakout-Tiles.png');
-  morado = loadImage('https://i.ibb.co/2ZcXwXs/05-Breakout-Tiles.png');
-  naranja = loadImage('https://i.ibb.co/PcJ5fCz/09-Breakout-Tiles.png');
-  //------------------------------------------------------   
+    //-----------------------------------------------------------------
+        base = loadImage("https://i.ibb.co/mzPj67g/base.png");
+        bolas = loadImage("https://i.ibb.co/qCP3MYV/58-Breakout-Tiles.png");
+        tabla = loadImage("https://i.ibb.co/ThPDzPW/50-Breakout-Tiles.png");
+        vida = loadImage("https://i.ibb.co/m8wVTJY/60-Breakout-Tiles.png");
+        estrellas = loadImage("https://i.ibb.co/FqsYsh8/59-Breakout-Tiles.png");
+        laser = loadImage("https://i.ibb.co/F0bYvdD/laser-Red03.png");
+    //-------------------------- Bricks --------------------
+        amarillo = loadImage("https://i.ibb.co/YNZKGND/13-Breakout-Tiles.png");
+        azul = loadImage("https://i.ibb.co/K69qmf9/11-Breakout-Tiles.png");
+        rojo = loadImage("https://i.ibb.co/pyGNmz9/07-Breakout-Tiles.png");
+        cafe = loadImage("https://i.ibb.co/RT7MttS/19-Breakout-Tiles.png");
+    //------------------------------------------------------
+        gris = loadImage("https://i.ibb.co/7WWzPw3/17-Breakout-Tiles.png");
+        verde = loadImage("https://i.ibb.co/JsMPxcQ/15-Breakout-Tiles.png");
+        morado = loadImage("https://i.ibb.co/2ZcXwXs/05-Breakout-Tiles.png");
+        naranja = loadImage("https://i.ibb.co/PcJ5fCz/09-Breakout-Tiles.png");
+    //------------------------------------------------------   
+        cafe_roto = loadImage("https://i.ibb.co/TLbzV7m/20-Breakout-Tiles.png");
+        gris_roto = loadImage("https://i.ibb.co/Q8h60WM/18-Breakout-Tiles.png");
+        verde_roto = loadImage("https://i.ibb.co/177Lm7g/16-Breakout-Tiles.png");
+        amarillo_roto = loadImage("https://i.ibb.co/QDQMXQs/14-Breakout-Tiles.png");
+        azul_roto = loadImage("https://i.ibb.co/n3GTDN7/12-Breakout-Tiles.png");
+        rojo_roto = loadImage("https://i.ibb.co/CWntqTb/08-Breakout-Tiles.png");
 }
-//--------------------------
+
+function collision_balas(j,i){
+    let bala = jugador.balas[j];
+    let brick = juego.bricks[i];
+
+    if(bala.x < brick.x + brick.largo  && bala.x + brick.largo  > brick.x && 
+        bala.y < brick.y + brick.ancho && bala.y + brick.ancho > brick.y){
+        return true;
+    }
+}
+
 function destruir(){
     for(let j in jugador.balas){
+        let bala = jugador.balas[j];
         for(let i in juego.bricks){
-            if(jugador.balas[j].x < juego.bricks[i].x + juego.bricks[i].largo  && 
-             jugador.balas[j].x + jugador.balas[j].largo  > juego.bricks[i].x && 
-             jugador.balas[j].y < juego.bricks[i].y + juego.bricks[i].ancho && 
-             jugador.balas[j].y + juego.bricks[i].ancho > juego.bricks[i].y){
-                jugador.balas[j].hit = true;
+            let brick = juego.bricks[i];
+            if(collision_balas(j,i) && brick.comodin === false){
+                bala.hit = true;
                 juego.bricks.splice(i,1);
                 jugador.puntaje += 1;
             }
+            else if(collision_balas(j,i) && brick.comodin === true){
+                bala.hit = true;
+                jugador.puntaje += 1;
+                brick.caida = true;
+            }
         }
-        if((jugador.balas[j].y + jugador.balas[j].largo) < 0){
-            jugador.balas[j].hit = true;
+        if((bala.y + bala.largo) < 0){
+            bala.hit = true;
         }
     }
     for(let j in jugador.balas){
@@ -166,32 +213,50 @@ function destruir(){
         }
     }
 }
-//--------------------------
+
 function disparar(){
     if(jugador.balas.length < juego.balas){
         bala = new Bala();
         jugador.balas.push(bala);
     }   
 }
-//--------------------------
-function crearbloques(){
+
+function crear_bloques(){
     for(let j = 0; j < juego.filas;j++){
         for(let i = 0;i < juego.columnas;i++){
-            bloque = new Brick();
+            comodin = Math.floor(random(0,2));
+            if(comodin === 0){
+                bloque = new Brick_comodin();
+                index = Math.floor(Math.random() * juego.colores_comodines.length);
+                bloque.color = juego.colores_comodines[index]; 
+            }
+            else{
+                bloque = new Brick_no_comodin();
+                index = Math.floor(Math.random() * juego.colores.length);
+                bloque.color = juego.colores[index]; 
+            }
             bloque.x = (i * 40);
             bloque.y = (j * 12);
-            bloque.color = juego.colores[Math.floor(Math.random() * juego.colores.length)];
             juego.bricks.push(bloque);
         }
     }
+    bola.x = jugador.x + jugador.largo / 2;
+    bola.y = jugador.y - bola.ancho;
+    bola.dy = -2;
 } 
-//--------------------------
+
 function actualizar(){
     background(0);
     image(base,0,350,width,50);
     image(estrellas,10,370,20,20);
     if(!juego.gameover){
         if(juego.running){
+            if(jugador.vidas === 0){
+                juego.gameover = true;
+            }
+            else if(juego.bricks.length < 1){
+                crear_bloques();
+            }
             for(let i = 0; i < jugador.vidas;i++){
                 image(vida,280 + (i * 20),370,20,20);
             }
@@ -201,9 +266,9 @@ function actualizar(){
             }
             for(let j in juego.bricks){
                 juego.bricks[j].mostrar();
-            }
-            if(jugador.vidas === 0){
-                juego.gameover = true;
+                if(juego.bricks[j].caida === true){
+                    juego.bricks[j].caer();
+                }
             }
             text("Puntaje: " + jugador.puntaje,10,370);
             jugador.mostrar();
@@ -219,10 +284,11 @@ function actualizar(){
     }
     else{
         fill(255);
-        text("Perdio",juego.largo / 2,juego.ancho / 2);   
+        text("Perdio",juego.largo / 2,juego.ancho / 2); 
+        text("Puntuacion " + jugador.puntaje,juego.largo / 2,juego.ancho / 2 + 10);
     }
 }
-//--------------------------
+//-------------------------------------------------------
 function keyPressed(){
   switch(keyCode){
     case(RIGHT_ARROW): //Flecha derecha
@@ -234,36 +300,33 @@ function keyPressed(){
     case(UP_ARROW):
         disparar();
         break;
-    case(32):
+    case(32):       //Barra de espacio
         juego.running = !juego.running;
         break;
   }
 }
-//------------------------
+
 function touchStarted(){
     disparar();
 }
-//------------------------
+
 function touchMoved(){
     jugador.x = mouseX; 
 }
-//-----------------------
+
 function mouseMoved() {
     jugador.velocidad = 0;
     jugador.x = mouseX;
 }
-//------------------------
+
 function setup(){
-  //------------------------------------------------------
     juego = new Juego(); 
     jugador = new Jugador();
     bola = new Bola();
-    crearbloques();
-  //------------------------------------------------------
+    crear_bloques();  
     createCanvas(juego.largo,juego.ancho);
-  //------------------------------------------------------
 }
-//------------------------
+
 function draw(){
   actualizar();
 } 
