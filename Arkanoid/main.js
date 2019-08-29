@@ -11,6 +11,8 @@ class Jugador{
     
     this.vidas = 3;
     this.balas = [];
+
+    this.disparar = false;
     
   }
   mostrar(){
@@ -75,23 +77,27 @@ class Bola{
                 jugador.puntaje += 1;
                 juego.bricks.splice(i,1);  
             }
-            else if (this.chocar(brick) && brick.comodin === true){
+            else if (this.chocar(brick) && brick.comodin === true && brick.caida === false){
+                this.dy = -this.dy;
+                jugador.puntaje += 1;
                 brick.caida = true;
             }
         }
     }
 }
+
 class Brick{
-  constructor(){
-    this.x = 0;
-    this.y = 0;
-    this.largo = 35;
-    this.ancho = 10;
-    this.color = null;
-  }
-  mostrar(){
-    image(this.color,this.x,this.y,this.largo,this.ancho); 
-  }
+    constructor(){
+        this.x = 0;
+        this.y = 0;
+        this.largo = 35;
+        this.ancho = 10;
+        this.crash = false;
+        this.color = null;
+    }
+    mostrar(){
+        image(this.color,this.x,this.y,this.largo,this.ancho); 
+    }
 
 }
 
@@ -111,7 +117,18 @@ class Brick_comodin extends Brick{
     }
     caer(){
         this.y += 1;
-    };
+        if(this.y > juego.ancho){
+            this.crash = true;
+        }
+    }
+    chocar(){
+        if(this.x < this.x + jugador.largo  && this.x + jugador.largo  > jugador.x && 
+        this.y < jugador.y + jugador.ancho && this.y + jugador.ancho > jugador.y)
+        {
+            jugador.disparar = true;
+            return true;
+        }
+    }
 }
 
 class Juego{
@@ -182,40 +199,48 @@ function collision_balas(j,i){
     let brick = juego.bricks[i];
 
     if(bala.x < brick.x + brick.largo  && bala.x + brick.largo  > brick.x && 
-        bala.y < brick.y + brick.ancho && bala.y + brick.ancho > brick.y){
+        bala.y < brick.y + brick.ancho && bala.y + bala.ancho > brick.y){
         return true;
     }
 }
 
 function destruir(){
-    for(let j in jugador.balas){
+    for (let j in jugador.balas){
         let bala = jugador.balas[j];
         for(let i in juego.bricks){
             let brick = juego.bricks[i];
             if(collision_balas(j,i) && brick.comodin === false){
                 bala.hit = true;
-                juego.bricks.splice(i,1);
-                jugador.puntaje += 1;
+                brick.crash = true;
             }
-            else if(collision_balas(j,i) && brick.comodin === true){
+            else if(collision_balas(j,i) && brick.comodin === true && brick.caida === false){
                 bala.hit = true;
-                jugador.puntaje += 1;
                 brick.caida = true;
             }
         }
-        if((bala.y + bala.largo) < 0){
-            bala.hit = true;
+    }
+    for (let j in jugador.balas){
+        bala = jugador.balas[j];
+        if(bala.hit === true || bala.y < 0){
+            jugador.balas.splice(j,1);
         }
     }
-    for(let j in jugador.balas){
-        if(jugador.balas[j].hit === true){
-            jugador.balas.splice(j,1);
+    for (let i in juego.bricks){
+        let brick = juego.bricks[i];
+
+        if(brick.crash === true){
+            jugador.puntaje += 1;
+            juego.bricks.splice(i,1);  
+        }
+
+        else if(brick.comodin === true && brick.chocar()){
+            juego.bricks.splice(i,1);
         }
     }
 }
 
 function disparar(){
-    if(jugador.balas.length < juego.balas){
+    if(jugador.balas.length < juego.balas && jugador.disparar === true){
         bala = new Bala();
         jugador.balas.push(bala);
     }   
