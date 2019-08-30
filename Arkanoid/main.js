@@ -54,8 +54,7 @@ class Bola{
             this.dx = -this.dx;
         }
         //------------------ Jugador --------------
-        else if(this.x >= jugador.x && 
-        this.x <= (jugador.x + jugador.largo) && this.y + this.ancho >= jugador.y &&this.y < (jugador.y + jugador.ancho)){
+        else if(this.x >= jugador.x && this.x <= (jugador.x + jugador.largo) && this.y + this.ancho >= jugador.y &&this.y < (jugador.y + jugador.ancho)){
             this.dy = -this.dy;
         }
   }
@@ -93,6 +92,7 @@ class Brick{
         this.largo = 35;
         this.ancho = 10;
         this.crash = false;
+        this.hit = false;
         this.color = null;
     }
     mostrar(){
@@ -112,7 +112,6 @@ class Brick_comodin extends Brick{
     constructor(){
         super();
         this.comodin = true;
-        this.hit = false;
         this.caida = false;
     }
     caer(){
@@ -198,7 +197,7 @@ function collision_balas(j,i){
     let bala = jugador.balas[j];
     let brick = juego.bricks[i];
 
-    if(bala.x < brick.x + brick.largo  && bala.x + brick.largo  > brick.x && 
+    if(bala.x < brick.x + brick.largo  && bala.x + bala.largo  > brick.x &&
         bala.y < brick.y + brick.ancho && bala.y + bala.ancho > brick.y){
         return true;
     }
@@ -211,10 +210,12 @@ function destruir(){
             let brick = juego.bricks[i];
             if(collision_balas(j,i) && brick.comodin === false){
                 bala.hit = true;
+                brick.hit = true;
                 brick.crash = true;
             }
             else if(collision_balas(j,i) && brick.comodin === true && brick.caida === false){
                 bala.hit = true;
+                brick.hit = true;
                 brick.caida = true;
             }
         }
@@ -228,10 +229,15 @@ function destruir(){
     for (let i in juego.bricks){
         let brick = juego.bricks[i];
 
-        if(brick.crash === true){
+        if(brick.hit === true){
             jugador.puntaje += 1;
+            brick.hit = false;
+        }
+
+        else if(brick.crash === true){
             juego.bricks.splice(i,1);  
         }
+        
 
         else if(brick.comodin === true && brick.chocar()){
             juego.bricks.splice(i,1);
