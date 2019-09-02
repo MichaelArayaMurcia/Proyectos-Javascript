@@ -11,6 +11,7 @@ class Jugador{
     
     this.vidas = 3;
     this.balas = [];
+    this.bolas = [];
 
     this.disparar = false;
     
@@ -25,37 +26,37 @@ class Jugador{
 }
 
 class Bola{
-    constructor(){
-        this.x = 0;
-        this.y = 0;
+    constructor(x,y){
+        this.x = x;
+        this.y = y;
         this.largo = 10;
         this.ancho = 10; 
         
         this.dx = 1;
         this.dy = -2;
+        
+        this.sonido = new Audio("http://k007.kiwi6.com/hotlink/zf8e3af0c2/Bounce.wav");
   }
     mostrar(){
-        this.x += bola.dx;
-        this.y += bola.dy;
+        this.x += this.dx;
+        this.y += this.dy;
         image(bolas,this.x,this.y,this.largo,this.ancho);
   }
     rebotar(){
         //------------------ Vertical -------------
-        if(this.y > juego.ancho){
-             this.x = 200;
-             this.y = 200;
-             jugador.vidas -= 1;
-        }
-        else if(this.y < 0){
+        if(this.y < 0){
             this.dy = -this.dy;
+            this.sonido.play();
         }
         //------------------ Horizontal -----------
         else if(this.x + this.largo > juego.largo || this.x < 0){
             this.dx = -this.dx;
+            this.sonido.play();
         }
         //------------------ Jugador --------------
         else if(this.x >= jugador.x && this.x <= (jugador.x + jugador.largo) && this.y + this.ancho >= jugador.y &&this.y < (jugador.y + jugador.ancho)){
             this.dy = -this.dy;
+            this.sonido.play();
         }
   }
   //---------------------------------------------
@@ -64,6 +65,7 @@ class Bola{
             this.x + this.largo  > brick.x && 
             this.y < brick.y + brick.ancho && 
             this.y + brick.ancho > brick.y){
+            this.sonido.play();
           return true;
       }
   }
@@ -93,10 +95,10 @@ class Brick{
         this.ancho = 10;
         this.crash = false;
         this.hit = false;
-        this.color = null;
+        this.imagen = null;
     }
     mostrar(){
-        image(this.color,this.x,this.y,this.largo,this.ancho); 
+        image(this.imagen,this.x,this.y,this.largo,this.ancho); 
     }
 
 }
@@ -113,19 +115,77 @@ class Brick_comodin extends Brick{
         super();
         this.comodin = true;
         this.caida = false;
+        this.tipo = Math.trunc(random(1,8));
+        this.sonido = new Audio("http://k007.kiwi6.com/hotlink/459qdqiotj/bonus.wav");
     }
     caer(){
+        this.ancho = 20;
         this.y += 1;
+        switch(this.tipo){
+            case(1):
+                this.imagen = laser_comodin;
+                break;
+            case(2):
+                this.imagen = alargar_comodin;
+                break;
+            case(3):
+                this.imagen = puntos_100;
+                break;
+            case(4):
+                this.imagen = puntos_250;
+                break;
+            case(5):
+                this.imagen = puntos_500;
+                break;
+            case(6):
+                this.imagen = encoger_comodin;
+                break;
+            case(7):
+                this.imagen = bolas_comodin;
+                break;
+        }
         if(this.y > juego.ancho){
             this.crash = true;
         }
     }
     chocar(){
-        if(this.x < this.x + jugador.largo  && this.x + jugador.largo  > jugador.x && 
-        this.y < jugador.y + jugador.ancho && this.y + jugador.ancho > jugador.y)
-        {
-            jugador.disparar = true;
+        if (this.x < jugador.x + jugador.largo  && this.x + this.largo  > jugador.x &&
+     this.y < jugador.y + jugador.ancho && this.y + this.ancho > jugador.y){
+         this.sonido.play();
             return true;
+        }
+    }
+    power_ups(){
+        if(this.chocar()){
+            switch(this.tipo){
+                case(1):
+                    jugador.disparar = true;
+                    break;
+                case(2):
+                    jugador.largo += 20;
+                    break;
+                case(3):
+                    jugador.puntaje += 100;
+                    break;
+                case(4):
+                    jugador.puntaje += 250;
+                    break;
+                case(5):
+                    jugador.puntaje += 500;
+                    break;
+                case(6):
+                    if(jugador.largo >= 40){
+                        jugador.largo -= 20;
+                    }
+                    break;
+                case(7):
+                    let x = jugador.bolas[0].x;
+                    let y = jugador.bolas[0].y;
+                    let bola = new Bola(x,y);
+                    jugador.bolas.push(bola);
+                    jugador.bolas.push(bola);
+                    break;
+            }
         }
     }
 }
@@ -156,6 +216,7 @@ class Bala{
         this.largo = 5;
         this.ancho = 10;
         this.hit = false;
+        this.sonido = new Audio("http://k007.kiwi6.com/hotlink/7di9miccg9/sfx_laser1.ogg");
     }
     show(){
         image(laser,this.x,this.y,this.largo,this.ancho);
@@ -173,7 +234,7 @@ function preload(){
         tabla = loadImage("https://i.ibb.co/ThPDzPW/50-Breakout-Tiles.png");
         vida = loadImage("https://i.ibb.co/m8wVTJY/60-Breakout-Tiles.png");
         estrellas = loadImage("https://i.ibb.co/FqsYsh8/59-Breakout-Tiles.png");
-        laser = loadImage("https://i.ibb.co/F0bYvdD/laser-Red03.png");
+        laser = loadImage("https://i.ibb.co/nm1J3WW/61-Breakout-Tiles.png");
     //-------------------------- Bricks --------------------
         amarillo = loadImage("https://i.ibb.co/YNZKGND/13-Breakout-Tiles.png");
         azul = loadImage("https://i.ibb.co/K69qmf9/11-Breakout-Tiles.png");
@@ -191,6 +252,31 @@ function preload(){
         amarillo_roto = loadImage("https://i.ibb.co/QDQMXQs/14-Breakout-Tiles.png");
         azul_roto = loadImage("https://i.ibb.co/n3GTDN7/12-Breakout-Tiles.png");
         rojo_roto = loadImage("https://i.ibb.co/CWntqTb/08-Breakout-Tiles.png");
+    //------------------------- Comodines ------------------------
+        laser_comodin = loadImage("https://i.ibb.co/7gX68mF/48-Breakout-Tiles.png");
+        bolas_comodin = loadImage("https://i.ibb.co/Hnd1CZ7/43-Breakout-Tiles.png");
+        alargar_comodin = loadImage("https://i.ibb.co/RpBhZ27/47-Breakout-Tiles.png");
+        encoger_comodin = loadImage("https://i.ibb.co/85YnLfC/46-Breakout-Tiles.png");
+        relantizar_comodin = loadImage("https://i.ibb.co/YjpxK4t/41-Breakout-Tiles.png");
+        puntos_100 = loadImage("https://i.ibb.co/tMpGsjx/38-Breakout-Tiles.png");
+        puntos_250 = loadImage("https://i.ibb.co/Rbd3wHR/39-Breakout-Tiles.png");
+        puntos_500 = loadImage("https://i.ibb.co/55ZK2PS/40-Breakout-Tiles.png");
+}
+
+function manejo_bolas(){
+    for(let j in jugador.bolas){
+        jugador.bolas[j].mostrar();
+        jugador.bolas[j].rebotar();
+        jugador.bolas[j].romper(); 
+        if(jugador.bolas.length === 1 && jugador.bolas[j].y > juego.ancho){
+            jugador.bolas[0].x = 200;
+            jugador.bolas[0].y = 200;
+            jugador.vidas -= 1;
+        }
+        else if(jugador.bolas.length >= 1 && jugador.bolas[j].y > juego.ancho){
+            jugador.bolas.splice(j,1);
+        }
+    }    
 }
 
 function collision_balas(j,i){
@@ -248,6 +334,7 @@ function destruir(){
 function disparar(){
     if(jugador.balas.length < juego.balas && jugador.disparar === true){
         bala = new Bala();
+        bala.sonido.play();
         jugador.balas.push(bala);
     }   
 }
@@ -259,21 +346,21 @@ function crear_bloques(){
             if(comodin === 0){
                 bloque = new Brick_comodin();
                 index = Math.floor(Math.random() * juego.colores_comodines.length);
-                bloque.color = juego.colores_comodines[index]; 
+                bloque.imagen = juego.colores_comodines[index]; 
             }
             else{
                 bloque = new Brick_no_comodin();
                 index = Math.floor(Math.random() * juego.colores.length);
-                bloque.color = juego.colores[index]; 
+                bloque.imagen = juego.colores[index]; 
             }
             bloque.x = (i * 40);
             bloque.y = (j * 12);
             juego.bricks.push(bloque);
         }
     }
-    bola.x = jugador.x + jugador.largo / 2;
-    bola.y = jugador.y - bola.ancho;
-    bola.dy = -2;
+    jugador.bolas[0].x = jugador.x + jugador.largo / 2;
+    jugador.bolas[0].y = jugador.y - 20;
+    jugador.bolas[0].dy = -2;    
 } 
 
 function actualizar(){
@@ -299,14 +386,14 @@ function actualizar(){
                 juego.bricks[j].mostrar();
                 if(juego.bricks[j].caida === true){
                     juego.bricks[j].caer();
+                    juego.bricks[j].power_ups();
                 }
             }
-            text("Puntaje: " + jugador.puntaje,10,370);
+            
+            manejo_bolas();
             jugador.mostrar();
-            bola.mostrar();
-            bola.rebotar();
-            bola.romper();
             destruir();
+            text("Puntaje: " + jugador.puntaje,10,370);
         }
         else{
             fill(255);
@@ -351,9 +438,9 @@ function mouseMoved() {
 }
 
 function setup(){
-    juego = new Juego(); 
     jugador = new Jugador();
-    bola = new Bola();
+    juego = new Juego();
+    jugador.bolas.push(new Bola(jugador.x + jugador.largo / 2,jugador.y - 20));
     crear_bloques();  
     createCanvas(juego.largo,juego.ancho);
 }
