@@ -162,6 +162,11 @@ class Brick_comodin extends Brick{
                     jugador.disparar = true;
                     break;
                 case(2):
+                    if(jugador.largo === 80){
+                        jugador.largo += 0;
+                    }else{
+                        jugador.largo += 20;
+                    }
                     jugador.largo += 20;
                     break;
                 case(3):
@@ -174,16 +179,21 @@ class Brick_comodin extends Brick{
                     jugador.puntaje += 500;
                     break;
                 case(6):
-                    if(jugador.largo >= 40){
+                    if(jugador.largo === 40){
+                        jugador.largo += 0;
+                    }else{
                         jugador.largo -= 20;
                     }
                     break;
                 case(7):
                     let x = jugador.bolas[0].x;
                     let y = jugador.bolas[0].y;
-                    let bola = new Bola(x,y);
-                    jugador.bolas.push(bola);
-                    jugador.bolas.push(bola);
+                    if(jugador.bolas.length < 3){
+                        let bola = new Bola(x,y);
+                        bola.dx = -bola.dx;
+                        bola.dy = -bola.dy;
+                        jugador.bolas.push(bola);
+                    }
                     break;
             }
         }
@@ -273,7 +283,7 @@ function manejo_bolas(){
             jugador.bolas[0].y = 200;
             jugador.vidas -= 1;
         }
-        else if(jugador.bolas.length >= 1 && jugador.bolas[j].y > juego.ancho){
+        else if(jugador.bolas.length > 1 && jugador.bolas[j].y > juego.ancho){
             jugador.bolas.splice(j,1);
         }
     }    
@@ -319,12 +329,9 @@ function destruir(){
             jugador.puntaje += 1;
             brick.hit = false;
         }
-
         else if(brick.crash === true){
             juego.bricks.splice(i,1);  
         }
-        
-
         else if(brick.comodin === true && brick.chocar()){
             juego.bricks.splice(i,1);
         }
@@ -336,6 +343,7 @@ function disparar(){
         bala = new Bala();
         bala.sonido.play();
         jugador.balas.push(bala);
+        return true;
     }   
 }
 
@@ -358,9 +366,12 @@ function crear_bloques(){
             juego.bricks.push(bloque);
         }
     }
+    for(let j = jugador.bolas.length; j > 1; j--){
+      jugador.bolas.pop();
+    }
     jugador.bolas[0].x = jugador.x + jugador.largo / 2;
     jugador.bolas[0].y = jugador.y - 20;
-    jugador.bolas[0].dy = -2;    
+    jugador.bolas[0].dy = -2; 
 } 
 
 function actualizar(){
