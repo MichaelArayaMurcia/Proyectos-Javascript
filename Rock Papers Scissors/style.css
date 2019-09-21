@@ -1,0 +1,49 @@
+.container {
+	/*width: 1000px;*/
+	background: orange;
+	border: solid black;
+}
+
+.jugador {
+	/*width: 800px;*/
+	background: blue;
+	border: solid black;
+}
+
+button {
+	width: 100px;
+	height: 100px;
+}
+
+.rock {
+	background-image: url("https://i.ibb.co/NK9sjCg/game-rock.png");
+	background-size: 100%;
+}
+
+.paper {
+	background-image: url("https://i.ibb.co/ynmKJRB/game-paper.png");
+	background-size: 100%;
+}
+
+.scissor {
+	background-image: url("https://i.ibb.co/hKNG9KQ/game-scissors.png");
+	background-size: 100%;
+}
+
+.marcador {
+	/*width: 800px;*/
+	height: 200px;
+	background: blue;
+	border: solid black;
+}
+
+.eleccion {
+	width: 100px;
+	height: 100px;
+	background-color: gray;
+	border: solid black; 
+}
+
+.estado {
+	margin-left: 33%;
+}
