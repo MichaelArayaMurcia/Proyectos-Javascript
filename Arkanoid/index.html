@@ -1,13 +1,24 @@
+<!--Un pequeño proyecto hecho en javascript con la libreria de P5-->
+<!--Por favor comenten que les parece el juego y el codigo :)-->
 <!DOCTYPE html>
 <html>
     <head>
         <title>Arkanoid</title>
-        <meta charset="8-utf">
-    	  <link rel="stylesheet" href="style.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.sound.js"></script>
+        <script src="main.js"></script>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-    	<!-- <canvas id="tutorial"> </canvas> -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
-	  <script src="main.js"></script>
+        <div class="menu" id="menu">
+            <button onclick="empezar_juego()" id="boton" value="this"></button>
+        </div>
+            <button class="pausa" onclick="pausar_juego()" id="pausa"></button>
+            <button class="musica" onclick="activar_sonido()" id="musica"></button> <br>
+        <div id="contenedor">
+            <!--<audio src="https://archive.org/download/bouncemp3/Bounce_mp3.mp3" autoplay="false" crossOrigin="anonymous" id="sonido_bola" preload="auto"></audio>-->
+            <!--<audio src="https://archive.org/download/bonus_brick/bonus_brick.mp3" autoplay="false" crossOrigin="anonymous" id="sonido_bola" preload="auto"></audio>-->
+        </div>
     </body>
 </html>

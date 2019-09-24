@@ -1,41 +1,41 @@
 class Jugador{
-  constructor(){
-    this.x = 170;
-    this.y = 340;
+    constructor(){
+        this.x = 170;
+        this.y = 340;
     
-    this.largo = 60;
-    this.ancho = 10;
+        this.largo = 60;
+        this.ancho = 10;
     
-    this.velocidad = 0;
-    this.puntaje = 0;
+        this.velocidad = 0;
+        this.puntaje = 0;
     
-    this.vidas = 3;
-    this.balas = [];
-    this.bolas = [];
+        this.vidas = 3;
+        this.balas = [];
+        this.bolas = [];
 
-    this.disparar = false;
-    
-  }
-  mostrar(){
-    this.x += this.velocidad;
-    if(this.x + this.largo > juego.largo || this.x < 0){
-        this.x += -this.velocidad;
+        this.disparar = true;
     }
-    image(tabla,this.x,this.y,this.largo,this.ancho);
-  }
+    mostrar(){
+        this.x += this.velocidad;
+        if(this.x + this.largo > juego.largo || this.x < 0){
+            this.x += -this.velocidad;
+        }
+        image(tabla,this.x,this.y,this.largo,this.ancho);
+    }
 }
 
 class Bola{
     constructor(x,y){
         this.x = x;
         this.y = y;
+        
         this.largo = 10;
         this.ancho = 10; 
         
         this.dx = 1;
         this.dy = -2;
         
-        this.sonido = new Audio("http://k007.kiwi6.com/hotlink/zf8e3af0c2/Bounce.wav");
+        this.sonido = new Audio("https://archive.org/download/bouncemp3/Bounce_mp3.mp3");
   }
     mostrar(){
         this.x += this.dx;
@@ -46,17 +46,17 @@ class Bola{
         //------------------ Vertical -------------
         if(this.y < 0){
             this.dy = -this.dy;
-            this.sonido.play();
+            return true;
         }
         //------------------ Horizontal -----------
         else if(this.x + this.largo > juego.largo || this.x < 0){
             this.dx = -this.dx;
-            this.sonido.play();
+            return true;
         }
         //------------------ Jugador --------------
         else if(this.x >= jugador.x && this.x <= (jugador.x + jugador.largo) && this.y + this.ancho >= jugador.y &&this.y < (jugador.y + jugador.ancho)){
             this.dy = -this.dy;
-            this.sonido.play();
+            return true;
         }
   }
   //---------------------------------------------
@@ -64,8 +64,8 @@ class Bola{
       if(this.x < brick.x + brick.largo  && 
             this.x + this.largo  > brick.x && 
             this.y < brick.y + brick.ancho && 
-            this.y + brick.ancho > brick.y){
-            this.sonido.play();
+            this.y + brick.ancho > brick.y)
+        {
           return true;
       }
   }
@@ -77,11 +77,13 @@ class Bola{
                 this.dy = -this.dy;
                 jugador.puntaje += 1;
                 juego.bricks.splice(i,1);  
+                return true;
             }
             else if (this.chocar(brick) && brick.comodin === true && brick.caida === false){
                 this.dy = -this.dy;
                 jugador.puntaje += 1;
                 brick.caida = true;
+                return true;
             }
         }
     }
@@ -91,10 +93,13 @@ class Brick{
     constructor(){
         this.x = 0;
         this.y = 0;
+        
         this.largo = 35;
         this.ancho = 10;
+        
         this.crash = false;
         this.hit = false;
+        
         this.imagen = null;
     }
     mostrar(){
@@ -115,8 +120,12 @@ class Brick_comodin extends Brick{
         super();
         this.comodin = true;
         this.caida = false;
+        
         this.tipo = Math.trunc(random(1,8));
-        this.sonido = new Audio("http://k007.kiwi6.com/hotlink/459qdqiotj/bonus.wav");
+        
+        this.sonido = new Audio("https://archive.org/download/bonus_brick/bonus_brick.mp3");
+        // this.sonido = document.createElement('audio');
+        // this.sonido.src = "https://archive.org/download/bonus_brick/bonus_brick.mp3";
     }
     caer(){
         this.ancho = 20;
@@ -149,9 +158,12 @@ class Brick_comodin extends Brick{
         }
     }
     chocar(){
-        if (this.x < jugador.x + jugador.largo  && this.x + this.largo  > jugador.x &&
-     this.y < jugador.y + jugador.ancho && this.y + this.ancho > jugador.y){
-         this.sonido.play();
+        if (this.x < jugador.x + jugador.largo  && 
+        this.x + this.largo  > jugador.x &&
+        this.y < jugador.y + jugador.ancho && 
+        this.y + this.ancho > jugador.y)
+        {
+           // this.sonido.play();
             return true;
         }
     }
@@ -196,6 +208,8 @@ class Brick_comodin extends Brick{
                     }
                     break;
             }
+
+            return true;
         }
     }
 }
@@ -209,11 +223,14 @@ class Juego{
         this.ancho = 400;
         this.balas = 2;
         this.velocidad = 3;
+        
         this.running = true;
+        this.empezar = false;
         this.gameover = false;
         this.disparo = false;
+        this.musica = false;
+        
         this.colores = [amarillo,azul,rojo,verde,cafe,gris,morado,naranja];
-        this.colores_comodines = [rojo_roto,azul_roto,amarillo_roto,verde_roto];
         this.bricks = [];
     }
     
@@ -225,8 +242,9 @@ class Bala{
         this.y = jugador.y - 20;
         this.largo = 5;
         this.ancho = 10;
+        
         this.hit = false;
-        this.sonido = new Audio("http://k007.kiwi6.com/hotlink/7di9miccg9/sfx_laser1.ogg");
+        this.sonido = new Audio("https://archive.org/download/sfx_laser/sfx_laser.mp3");
     }
     show(){
         image(laser,this.x,this.y,this.largo,this.ancho);
@@ -235,7 +253,6 @@ class Bala{
         this.y -= juego.velocidad; 
     }
 }
-
 
 function preload(){
     //-----------------------------------------------------------------
@@ -255,19 +272,13 @@ function preload(){
         verde = loadImage("https://i.ibb.co/JsMPxcQ/15-Breakout-Tiles.png");
         morado = loadImage("https://i.ibb.co/2ZcXwXs/05-Breakout-Tiles.png");
         naranja = loadImage("https://i.ibb.co/PcJ5fCz/09-Breakout-Tiles.png");
-    //------------------------------------------------------   
-        cafe_roto = loadImage("https://i.ibb.co/TLbzV7m/20-Breakout-Tiles.png");
-        gris_roto = loadImage("https://i.ibb.co/Q8h60WM/18-Breakout-Tiles.png");
-        verde_roto = loadImage("https://i.ibb.co/177Lm7g/16-Breakout-Tiles.png");
-        amarillo_roto = loadImage("https://i.ibb.co/QDQMXQs/14-Breakout-Tiles.png");
-        azul_roto = loadImage("https://i.ibb.co/n3GTDN7/12-Breakout-Tiles.png");
-        rojo_roto = loadImage("https://i.ibb.co/CWntqTb/08-Breakout-Tiles.png");
     //------------------------- Comodines ------------------------
         laser_comodin = loadImage("https://i.ibb.co/7gX68mF/48-Breakout-Tiles.png");
         bolas_comodin = loadImage("https://i.ibb.co/Hnd1CZ7/43-Breakout-Tiles.png");
         alargar_comodin = loadImage("https://i.ibb.co/RpBhZ27/47-Breakout-Tiles.png");
         encoger_comodin = loadImage("https://i.ibb.co/85YnLfC/46-Breakout-Tiles.png");
         relantizar_comodin = loadImage("https://i.ibb.co/YjpxK4t/41-Breakout-Tiles.png");
+    //----------------------------------------------------------------
         puntos_100 = loadImage("https://i.ibb.co/tMpGsjx/38-Breakout-Tiles.png");
         puntos_250 = loadImage("https://i.ibb.co/Rbd3wHR/39-Breakout-Tiles.png");
         puntos_500 = loadImage("https://i.ibb.co/55ZK2PS/40-Breakout-Tiles.png");
@@ -275,18 +286,88 @@ function preload(){
 
 function manejo_bolas(){
     for(let j in jugador.bolas){
-        jugador.bolas[j].mostrar();
-        jugador.bolas[j].rebotar();
-        jugador.bolas[j].romper(); 
-        if(jugador.bolas.length === 1 && jugador.bolas[j].y > juego.ancho){
+        let bola = jugador.bolas[j];
+        bola.mostrar();
+        if(jugador.bolas.length === 1 && bola.y > juego.ancho){
             jugador.bolas[0].x = 200;
             jugador.bolas[0].y = 200;
             jugador.vidas -= 1;
         }
-        else if(jugador.bolas.length > 1 && jugador.bolas[j].y > juego.ancho){
+        else if(jugador.bolas.length > 1 && bola.y > juego.ancho){
             jugador.bolas.splice(j,1);
         }
     }    
+}
+
+function manejo_jugador(){
+    jugador.mostrar();
+    if(jugador.vidas === 0){
+        juego.gameover = true;
+    }
+    for(let i = 0; i < jugador.vidas;i++){
+        image(vida,280 + (i * 20),370,20,20);
+    }
+    for(let j in jugador.balas){
+        let bala = jugador.balas[j];
+        bala.show();
+        bala.update();
+    }
+}
+
+function manejo_bricks(){
+    if(juego.bricks.length < 1){
+        crear_bloques();
+    }
+    for(let j in juego.bricks){
+        let brick = juego.bricks[j];
+        brick.mostrar();
+        if(brick.caida === true){
+            brick.caer();
+        }
+    }
+}
+
+function manejo_sonido(){
+    for(let i in jugador.bolas){
+        let bola = jugador.bolas[i];
+        if(bola.rebotar() || bola.romper()){
+            if(juego.musica === true){
+                bola.sonido.play(); 
+            }
+        }
+    }
+    for(let j in juego.bricks){
+        let brick = juego.bricks[j];
+        if(brick.comodin === true && brick.power_ups()){
+            if(juego.musica === true){
+                brick.sonido.play();
+            }
+        }
+    }
+}
+
+function pausar_juego(){
+    let boton = document.getElementById("pausa");
+    
+    juego.running = !juego.running;
+    if(juego.running){
+        boton.style.backgroundImage = "url('https://i.ibb.co/GJTLcv7/Icon-Pause2.png')"
+    } else {
+        boton.style.backgroundImage = "url('https://i.ibb.co/hcG43SC/Icon-Play.png')"
+    }
+}
+
+function activar_sonido(){
+    let boton = document.getElementById("musica");
+    
+    juego.musica = !juego.musica;
+    
+    if(juego.musica){
+        boton.style.backgroundImage = "url('https://i.ibb.co/B6HJ7dr/Vector-Soun-On.png')";
+    } else {
+        boton.style.backgroundImage = "url('https://i.ibb.co/wYTqYbL/Vector-Sound-Muted.png')";
+    }
+
 }
 
 function collision_balas(j,i){
@@ -299,7 +380,7 @@ function collision_balas(j,i){
     }
 }
 
-function destruir(){
+function destruir_objetos(){
     for (let j in jugador.balas){
         let bala = jugador.balas[j];
         for(let i in juego.bricks){
@@ -317,7 +398,7 @@ function destruir(){
         }
     }
     for (let j in jugador.balas){
-        bala = jugador.balas[j];
+        let bala = jugador.balas[j];
         if(bala.hit === true || bala.y < 0){
             jugador.balas.splice(j,1);
         }
@@ -338,10 +419,12 @@ function destruir(){
     }
 }
 
-function disparar(){
+function disparar_balas(){
     if(jugador.balas.length < juego.balas && jugador.disparar === true){
         bala = new Bala();
-        bala.sonido.play();
+        if(juego.musica){
+            bala.sonido.play();
+        }
         jugador.balas.push(bala);
         return true;
     }   
@@ -353,8 +436,8 @@ function crear_bloques(){
             comodin = Math.floor(random(0,2));
             if(comodin === 0){
                 bloque = new Brick_comodin();
-                index = Math.floor(Math.random() * juego.colores_comodines.length);
-                bloque.imagen = juego.colores_comodines[index]; 
+                index = Math.floor(Math.random() * juego.colores.length);
+                bloque.imagen = juego.colores[index]; 
             }
             else{
                 bloque = new Brick_no_comodin();
@@ -374,47 +457,43 @@ function crear_bloques(){
     jugador.bolas[0].dy = -2; 
 } 
 
+function empezar_juego(){
+    let btn = document.getElementById("boton");
+    let cnv = document.getElementById("contenedor");
+    let menu = document.getElementById("menu");
+    
+    juego.empezar = true;
+    btn.style.display = 'none';
+    cnv.style.display = 'inline-block';
+    menu.style.display = 'none';
+}
+
 function actualizar(){
+    let posX = juego.largo / 2;
+    let posY = juego.ancho / 2;
+    
     background(0);
     image(base,0,350,width,50);
     image(estrellas,10,370,20,20);
     if(!juego.gameover){
         if(juego.running){
-            if(jugador.vidas === 0){
-                juego.gameover = true;
-            }
-            else if(juego.bricks.length < 1){
-                crear_bloques();
-            }
-            for(let i = 0; i < jugador.vidas;i++){
-                image(vida,280 + (i * 20),370,20,20);
-            }
-            for(let j in jugador.balas){
-                jugador.balas[j].show();
-                jugador.balas[j].update();
-            }
-            for(let j in juego.bricks){
-                juego.bricks[j].mostrar();
-                if(juego.bricks[j].caida === true){
-                    juego.bricks[j].caer();
-                    juego.bricks[j].power_ups();
-                }
-            }
-            
+            manejo_jugador();
             manejo_bolas();
-            jugador.mostrar();
-            destruir();
+            manejo_bricks();
+            manejo_sonido();
+        
+            destruir_objetos();
             text("Puntaje: " + jugador.puntaje,10,370);
         }
         else{
             fill(255);
-            text("Pausa",juego.largo / 2,juego.ancho / 2);
+            text("Pausa",posX,posY);
         }
     }
     else{
         fill(255);
-        text("Perdio",juego.largo / 2,juego.ancho / 2); 
-        text("Puntuacion " + jugador.puntaje,juego.largo / 2,juego.ancho / 2 + 10);
+        text("Perdio",posX,posY); 
+        text("Puntuacion " + jugador.puntaje,posX,posY + 10);
     }
 }
 //-------------------------------------------------------
@@ -427,16 +506,16 @@ function keyPressed(){
         jugador.velocidad = -  juego.velocidad;
         break;
     case(UP_ARROW):
-        disparar();
+        disparar_balas();
         break;
     case(32):       //Barra de espacio
-        juego.running = !juego.running;
+        pausar_juego();
         break;
   }
 }
 
 function touchStarted(){
-    disparar();
+    disparar_balas();
 }
 
 function touchMoved(){
@@ -451,11 +530,16 @@ function mouseMoved() {
 function setup(){
     jugador = new Jugador();
     juego = new Juego();
-    jugador.bolas.push(new Bola(jugador.x + jugador.largo / 2,jugador.y - 20));
+    let x = jugador.x + jugador.largo / 2;
+    let y = jugador.y - 20;
+    jugador.bolas.push(new Bola(x,y));
     crear_bloques();  
-    createCanvas(juego.largo,juego.ancho);
+    let canvas = createCanvas(juego.largo,juego.ancho);
+    canvas.parent("contenedor");
 }
 
 function draw(){
-  actualizar();
+    if(juego.empezar){
+        actualizar();
+    }
 } 
