@@ -13,7 +13,7 @@ class Jugador{
         this.balas = [];
         this.bolas = [];
 
-        this.disparar = true;
+        this.disparar = false;
     }
     mostrar(){
         this.x += this.velocidad;
@@ -357,6 +357,10 @@ function pausar_juego(){
     }
 }
 
+function reiniciar_juego(){
+    empezar_juego();
+}
+
 function activar_sonido(){
     let boton = document.getElementById("musica");
     
@@ -458,14 +462,38 @@ function crear_bloques(){
 } 
 
 function empezar_juego(){
-    let btn = document.getElementById("boton");
+    let btn_play = document.getElementById("boton");
     let cnv = document.getElementById("contenedor");
     let menu = document.getElementById("menu");
+    let botones = document.getElementById("botones");
+    let reiniciar = document.getElementById("reiniciar");
     
     juego.empezar = true;
-    btn.style.display = 'none';
+    juego.gameover = false;
+    
+    btn_play.style.display = 'none';
     cnv.style.display = 'inline-block';
+    cnv.style.border = "solid black";
     menu.style.display = 'none';
+    botones.style.display = "inline-block"
+    reiniciar.style.display = "none";
+    
+    jugador = new Jugador();
+    let x = jugador.x + jugador.largo / 2;
+    let y = jugador.y - 20;
+    jugador.bolas.push(new Bola(x,y));
+    crear_bloques(); 
+    console.log("Funciono");
+}
+
+function terminar_juego(){
+    let pausa = document.getElementById("pausa");
+    let sonido = document.getElementById("musica");
+    let reiniciar = document.getElementById("reiniciar");
+    
+    pausa.style.display = "none";
+    sonido.style.display = "none";
+    reiniciar.style.display = "inline-block";  
 }
 
 function actualizar(){
@@ -491,6 +519,7 @@ function actualizar(){
         }
     }
     else{
+        terminar_juego();
         fill(255);
         text("Perdio",posX,posY); 
         text("Puntuacion " + jugador.puntaje,posX,posY + 10);
@@ -528,14 +557,10 @@ function mouseMoved() {
 }
 
 function setup(){
-    jugador = new Jugador();
     juego = new Juego();
-    let x = jugador.x + jugador.largo / 2;
-    let y = jugador.y - 20;
-    jugador.bolas.push(new Bola(x,y));
-    crear_bloques();  
     let canvas = createCanvas(juego.largo,juego.ancho);
     canvas.parent("contenedor");
+    
 }
 
 function draw(){
