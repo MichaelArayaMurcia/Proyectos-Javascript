@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tic-Tac-Toe</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+	    <h1 id="titulo"> Tic Tac Toe </h1>
+		<div class="container mt-5" id="container">
+		    <h3 class="float-left"> Columnas </h3>
+		    <h3 class="float-right"> Filas </h3><br><br>
+		    <input class="float-left" type="number" id="numero_columnas" min="3" max="7">
+		    <input class="float-right" type="number" id="numero_filas" min="3" max="7">
+		    <br>
+		    
+		    <label><img src="https://i.ibb.co/7Xn4G0F/x.png" id="X">
+		        <input class="eleccion_jugador" type="radio" name="jugador" value="X" id="j_X">
+		    </label>
+		    
+		    <label><img src="https://i.ibb.co/j4n3VMs/o.png" id="O">
+		        <input class="eleccion_jugador" type="radio" name="jugador" value="O" id="j_O">
+		    </label>
+		    <br>
+		    
+		    <button onclick="empezar_juego(); crear();" id="boton_empezar" class="mt-5"></button>
+		</div>
+		
+		<div class="datos" id="datos"></div>
+		<div id="tablero" class="tablero"></div>
+		
+		<script src="main.js"> </script>
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	</body>
+</html>
