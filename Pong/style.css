@@ -1,0 +1,64 @@
+#contenedor {
+    display: none;
+}
+
+.empezar {
+    width: 30px;
+    height: 30px;
+    background: url("https://i.ibb.co/jDR2DN7/Icon-Play.png");
+    background-size: 100%;
+}
+
+.botones {
+    display: none;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.musica {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    background-Image: url("https://i.ibb.co/wYTqYbL/Vector-Sound-Muted.png");
+    background-size: 100%;
+    border: solid black;
+}
+
+.pausa {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    background-Image: url("https://i.ibb.co/GJTLcv7/Icon-Pause2.png");
+    background-size: 100%;
+    border: solid black;
+}
+
+.reiniciar {
+    width: 30px;
+    height: 30px;
+    display: none;
+    background-Image: url("https://i.ibb.co/sjnThcr/Icon-Repeat.png");
+    background-size: 100%;
+    border: solid black;
+}
+
+.terminar {
+    width: 30px;
+    height: 30px;
+    background-Image: url("https://i.ibb.co/0tGsGbH/Icon-Home.png");
+    background-size: 100%;
+    border: solid black;
+    background-repeat: no-repeat;
+}
+
+.ayudar {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-Image: url("https://i.ibb.co/ZgqqpD6/Icon-Help.png");
+    background-size: 100%;
+    border: solid black;
+    background-repeat: no-repeat;
+}
