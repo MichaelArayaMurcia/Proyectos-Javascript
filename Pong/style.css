@@ -1,5 +1,23 @@
+body {
+    background-color: #e21d63;
+    font-family: "ArcadeClassicRegular", arial;    
+}
+
 #contenedor {
+    margin-top: 5px;
     display: none;
+}
+
+.menu {
+    background-color: #63E21D;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    border: solid black;
+}
+
+.menu-item {
+    margin: 5px 0px;
 }
 
 .empezar {
@@ -61,4 +79,39 @@ button:hover {
     background-size: 100%;
     border: solid black;
     background-repeat: no-repeat;
+}
+/*  */
+
+.configurar {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-Image: url("https://i.ibb.co/2gfFd9V/Icon-Settings.png");
+    background-size: 100%;
+    border: solid black;
+    background-repeat: no-repeat;
+}
+
+.configuraciones {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: #1D63E2;
+    border: solid black;
+}
+
+.configuraciones h3 {
+    margin-left: 10px;
+    color: black;
+}
+
+li{
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.boton-color {
+    background-size: 100%;
+    height: 30px;
+    width: 30px;
 }

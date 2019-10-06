@@ -6,17 +6,21 @@ class Juego {
         this.running = true;
         this.empezar = false;
         this.musica = false;
+        this.fondo = fondo_clasico;
+        this.imagen_derecha = color_rojo;
+        this.imagen_izquierda = color_azul;
     }
 }
 
 class Pong {
     constructor(){
         this.x = 0;
-        this.y = 0;
+        this.y = juego.largo / 2;
         this.largo = 10;
         this.ancho = 60;
         this.dy = 0;
-        this.imagen = azul;
+        this.puntaje = 0;
+        this.imagen = color_azul;
     }
     show(){
         image(this.imagen,this.x,this.y,this.largo,this.ancho);
@@ -35,7 +39,7 @@ class Bola {
         this.y = juego.ancho / 2;
         this.largo = 10;
         this.ancho = 10;
-        this.dx = 1;
+        this.dx = 1.8;
         this.dy = 2;
         this.imagen = bola_img;
         this.hit_ball = new Audio("https://ia601407.us.archive.org/22/items/pointscored/BallHitBat.mp3");
@@ -71,26 +75,53 @@ class Bola {
                 this.dx = -this.dx;
                 return "paddle";
         }
-        //Anotar puntos
-        else if(this.x + this.largo < 0 || this.x > juego.largo){
+        //Anotar puntos en el pong_derecho
+        else if(this.x + this.largo < 0){
             this.x = 200;
             this.dx = -this.dx;
+            pong_derecho.puntaje += 1;
             return "scored";
+        }
+        //Anotar puntos en el pong_izquierdo
+        else if(this.x > juego.largo){
+            this.x = 200;
+            this.dx = -this.dx;
+            pong_izquierdo.puntaje += 1;
+            return "scored";    
         }
     }
 }
 
 function preload(){
     bola_img = loadImage("https://i.ibb.co/qCP3MYV/58-Breakout-Tiles.png");
-    azul = loadImage("https://i.ibb.co/Ch4V99D/27-Breakout-Tiles.png");
-    rojo = loadImage("https://i.ibb.co/YhrHWY8/24-Breakout-Tiles.png");
+    color_azul = loadImage("https://i.ibb.co/Ch4V99D/27-Breakout-Tiles.png");
+    color_rojo = loadImage("https://i.ibb.co/YhrHWY8/24-Breakout-Tiles.png");
+    color_amarillo = loadImage("https://i.ibb.co/vZByHrh/26-Breakout-Tiles.png");
+    color_verde = loadImage("https://i.ibb.co/jRLDZqs/28-Breakout-Tiles.png");
+    //---------------------------------------------------
+    fondo_clasico = loadImage("https://i.ibb.co/4fN1xSc/pong-fondo.png");
 }
 
 function manejar_pongs(){
     pong_izquierdo.show();
-    pong_izquierdo.y = bola.y - 30;
+    if(bola.y < pong_izquierdo.y){
+        pong_izquierdo.dy = -juego.velocidad;
+    }
+    else if(bola.y > pong_izquierdo.y + pong_izquierdo.ancho){
+        pong_izquierdo.dy = juego.velocidad;
+    }
+        
+    pong_izquierdo.update();
     pong_derecho.show();
-    pong_derecho.update();    
+    pong_derecho.update();   
+    
+    fill(255);
+    textFont("ArcadeClassicRegular");
+    textSize(32);
+    textAlign(LEFT);
+    text("Score:" + pong_izquierdo.puntaje,pong_izquierdo.x + pong_izquierdo.largo,30);
+    textAlign(RIGHT);
+    text("Score:" + pong_derecho.puntaje,pong_derecho.x,30);
 }
 
 function manejar_bola(){
@@ -118,36 +149,44 @@ function manejo_sonido(){
     }
 }
 
-function activar_sonido(){
-    juego.musica = !juego.musica;
-}
-
 function empezar_juego(){
     let btn_play = document.getElementById("empezar");
-    let menu = document.getElementById("menu");
+    let div_menu = document.getElementById("menu");
     let btn_reiniciar = document.getElementById("reiniciar");
-    let cnv = document.getElementById("contenedor");
-    let botones = document.getElementById("botones");
+    let div_canvas = document.getElementById("contenedor");
+    let div_botones = document.getElementById("botones");
     let btn_pausa = document.getElementById("pausa");
     let btn_sonido = document.getElementById("musica");
-    let salir = document.getElementById("terminar");
+    let btn_salir = document.getElementById("terminar");
     
     
     juego.empezar = true;
     
     btn_play.style.display = 'none';
-    menu.style.display = 'none';
+    div_menu.style.display = 'none';
     btn_reiniciar.style.display = "inline-block";
-    cnv.style.display = 'inline-block';
-    botones.style.display = "inline-block";
+    div_canvas.style.display = 'inline-block';
+    div_botones.style.display = "inline-block";
     btn_pausa.style.display = "inline-block";
     btn_sonido.style.display = "inline-block";
-    salir.style.display = "inline-block";
+    btn_salir.style.display = "inline-block";
     
     pong_izquierdo = new Pong();
     pong_derecho = new Pong();
     bola = new Bola();
     pong_derecho.x = juego.largo - pong_derecho.largo;
+    pong_derecho.imagen = juego.imagen_derecha; 
+    pong_izquierdo.imagen = juego.imagen_izquierda;
+}
+
+function configurar_juego(){
+    let div_menu = document.getElementById("menu");
+    let div_canvas = document.getElementById("contenedor");
+    let div_config = document.getElementById("configuraciones");
+    
+    div_menu.style.display = "none";
+    div_canvas.style.display = "none"
+    div_config.style.display = "inline-block"
     
 }
 
@@ -168,23 +207,24 @@ function pantalla_pausa(){
 }
 
 function terminar_juego(){
-    let empezar = document.getElementById("empezar");
-    let menu = document.getElementById("menu");
-    let salir = document.getElementById("terminar");
-    let pausa = document.getElementById("pausa");
-    let sonido = document.getElementById("musica");
-    let reiniciar = document.getElementById("reiniciar");
-    let canvas = document.getElementById("contenedor");
+    let btn_empezar = document.getElementById("empezar");
+    let div_menu = document.getElementById("menu");
+    let btn_salir = document.getElementById("terminar");
+    let btn_pausa = document.getElementById("pausa");
+    let btn_sonido = document.getElementById("musica");
+    let btn_reiniciar = document.getElementById("reiniciar");
+    let div_canvas = document.getElementById("contenedor");
     
-    menu.style.display = "inline-block"
-    pausa.style.display = "none";
-    sonido.style.display = "none";
-    contenedor.style.display = "none";
-    terminar.style.display = "none";
-    reiniciar.style.display = "none";
-    empezar.style.display = "inline-block";
+    div_menu.style.display = "inline-block"
+    btn_pausa.style.display = "none";
+    btn_sonido.style.display = "none";
+    div_canvas.style.display = "none";
+    btn_salir.style.display = "none";
+    btn_reiniciar.style.display = "none";
+    btn_empezar.style.display = "inline-block";
     
     juego.empezar = false;
+    juego.running = true;
 }
 
 function activar_sonido(){
@@ -200,45 +240,92 @@ function activar_sonido(){
 }
 
 function actualizar(){
-    background(0);
+    image(juego.fondo,-1,0,juego.largo+10,juego.ancho+10);
     if(juego.running){
         manejar_pongs();
         manejar_bola();
         manejo_sonido();
     } else {
         fill(255);
-        text("Pausa",200,200);
+        textFont("ArcadeClassicRegular");
+        textSize(32);
+        textAlign(CENTER);
+        text("Pausa",juego.largo / 2,juego.ancho / 2);
     }
 }
-//------------------------------------------
+
 function touchMoved(){
-    pong_derecho.y = mouseY;
+    if(juego.empezar){
+        pong_derecho.y = mouseY;
+    }
 }
 
 function keyPressed(){
-    switch(keyCode){
-        case(UP_ARROW):
-            pong_derecho.dy -= juego.velocidad;
-            break;
-        case(DOWN_ARROW):
-            pong_derecho.dy += juego.velocidad;
-            break;
-        case(32): // Barra espaciadora
-            pantalla_pausa();
-            break;
+    if(juego.empezar){
+        switch(keyCode){
+            case(UP_ARROW):
+                pong_derecho.dy -= juego.velocidad;
+                break;
+            case(DOWN_ARROW):
+                pong_derecho.dy += juego.velocidad;
+                break;
+            case(32): // Barra espaciadora
+                pantalla_pausa();
+                break;
+        }
     }
 }
 
 function keyReleased(){
-    if (key != " ") {
-        pong_derecho.dy = 0;
+    if(juego.empezar){
+        if (key != " ") {
+            pong_derecho.dy = 0;
+        }
     }
+}
+
+function elegir(imagen){
+    pong_derecho.imagen = imagen;
 }
 
 function setup(){
     juego = new Juego();
     let canvas = createCanvas(juego.largo,juego.ancho);
     canvas.parent("contenedor");
+//------------------------------------------
+new Vue({
+        el: "#colores_pongderecho",
+        data: {
+            colores: [
+                {tipo: color_rojo,      valor: "https://i.ibb.co/YhrHWY8/24-Breakout-Tiles.png"},
+                {tipo: color_azul,      valor: "https://i.ibb.co/Ch4V99D/27-Breakout-Tiles.png"},
+                {tipo: color_amarillo,  valor: "https://i.ibb.co/vZByHrh/26-Breakout-Tiles.png"},
+                {tipo: color_verde,     valor: "https://i.ibb.co/jRLDZqs/28-Breakout-Tiles.png"}
+            ],
+        },
+        methods: {
+            elegir : function(imagen){
+                juego.imagen_derecha = imagen;
+            }
+        }
+    })
+new Vue({
+        el: "#colores_pongizquierdo",
+        data: {
+            colores: [
+                {tipo: color_rojo,      valor: "https://i.ibb.co/YhrHWY8/24-Breakout-Tiles.png"},
+                {tipo: color_azul,      valor: "https://i.ibb.co/Ch4V99D/27-Breakout-Tiles.png"},
+                {tipo: color_amarillo,  valor: "https://i.ibb.co/vZByHrh/26-Breakout-Tiles.png"},
+                {tipo: color_verde,     valor: "https://i.ibb.co/jRLDZqs/28-Breakout-Tiles.png"}
+            ],
+        },
+        methods: {
+            elegir : function(imagen){
+                juego.imagen_izquierda = imagen;    
+            }
+        }
+    })
+//------------------------------------------
 }
 
 function draw(){

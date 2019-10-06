@@ -2,22 +2,47 @@
 <html>
     <head>
         <title>Pong</title>
+        <link rel="stylesheet" href="https://fontlibrary.org/face/video-game-font" type="text/css"/>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
         <link rel="stylesheet" href="style.css">
+        <script src="main.js"></script>
     </head>
     <body>
         <div class="menu" id="menu">
-            <button onclick="empezar_juego()" id="empezar" class="empezar" value="this"></button>
+            <h1> PONG !</h1>
+            <button class="empezar menu-item" onclick="empezar_juego()" id="empezar" value="this"></button><br>
+            <button class="ayudar menu-item" onclick="ayudar_juego()" id="ayudar"></button><br>
+            <button class="configurar menu-item" onclick="configurar_juego()" id="configurar"></button>
         </div>
-        <button class="ayudar" onclick="ayudar_juego()" id="ayudar"></button>
         <div class="botones" id="botones">
             <button class="pausa" onclick="pantalla_pausa()" id="pausa"></button>
             <button class="musica" onclick="activar_sonido()" id="musica"></button> 
             <button class="reiniciar" onclick="reiniciar_juego()" id="reiniciar"></button>
             <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
         </div> <br>
-        <div id="contenedor">
-        </div>    
-        <script src="main.js"></script>
+        <div class="configuraciones" id="configuraciones">
+            <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
+            <h3> Paddle derecho</h3>
+            <div id="colores_pongderecho">
+                <ol>
+                    <li v-for="color in colores">
+                        <button class="boton-color" v-on:click="elegir(color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
+            <h3> Paddle izquierdo</h3>
+            <div id="colores_pongizquierdo">
+                <ol>
+                    <li v-for="color in colores">
+                        <button class="boton-color" v-on:click="elegir(color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
+            <h3> Fondo </h3>
+            <h3> Jugar </h3>
+            <h3> Preview </h3>
+        </div>
+        <div id="contenedor"></div> 
     </body>
 </html>
