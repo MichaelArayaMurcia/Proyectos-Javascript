@@ -63,6 +63,7 @@ button:hover {
 }
 
 .terminar {
+    margin-left: 10px;
     width: 30px;
     height: 30px;
     background-Image: url("https://i.ibb.co/0tGsGbH/Icon-Home.png");

@@ -150,26 +150,19 @@ function manejo_sonido(){
 }
 
 function empezar_juego(){
-    let btn_play = document.getElementById("empezar");
     let div_menu = document.getElementById("menu");
-    let btn_reiniciar = document.getElementById("reiniciar");
     let div_canvas = document.getElementById("contenedor");
     let div_botones = document.getElementById("botones");
-    let btn_pausa = document.getElementById("pausa");
-    let btn_sonido = document.getElementById("musica");
-    let btn_salir = document.getElementById("terminar");
+    let div_config = document.getElementById("configuraciones");
+
     
     
     juego.empezar = true;
     
-    btn_play.style.display = 'none';
-    div_menu.style.display = 'none';
-    btn_reiniciar.style.display = "inline-block";
-    div_canvas.style.display = 'inline-block';
+    div_menu.style.display = "none";
     div_botones.style.display = "inline-block";
-    btn_pausa.style.display = "inline-block";
-    btn_sonido.style.display = "inline-block";
-    btn_salir.style.display = "inline-block";
+    div_config.style.display = "none";
+    div_canvas.style.display = "inline-block";
     
     pong_izquierdo = new Pong();
     pong_derecho = new Pong();
@@ -181,12 +174,14 @@ function empezar_juego(){
 
 function configurar_juego(){
     let div_menu = document.getElementById("menu");
+    let div_botones = document.getElementById("botones");
     let div_canvas = document.getElementById("contenedor");
     let div_config = document.getElementById("configuraciones");
     
     div_menu.style.display = "none";
-    div_canvas.style.display = "none"
-    div_config.style.display = "inline-block"
+    div_canvas.style.display = "none";
+    div_botones.style.display = "none";
+    div_config.style.display = "inline-block";
     
 }
 
@@ -207,21 +202,15 @@ function pantalla_pausa(){
 }
 
 function terminar_juego(){
-    let btn_empezar = document.getElementById("empezar");
     let div_menu = document.getElementById("menu");
-    let btn_salir = document.getElementById("terminar");
-    let btn_pausa = document.getElementById("pausa");
-    let btn_sonido = document.getElementById("musica");
-    let btn_reiniciar = document.getElementById("reiniciar");
     let div_canvas = document.getElementById("contenedor");
+    let div_botones = document.getElementById("botones");
+    let div_config = document.getElementById("configuraciones");
     
-    div_menu.style.display = "inline-block"
-    btn_pausa.style.display = "none";
-    btn_sonido.style.display = "none";
+    div_menu.style.display = "inline-block";
     div_canvas.style.display = "none";
-    btn_salir.style.display = "none";
-    btn_reiniciar.style.display = "none";
-    btn_empezar.style.display = "inline-block";
+    div_botones.style.display = "none";
+    div_config.style.display = "none";
     
     juego.empezar = false;
     juego.running = true;
