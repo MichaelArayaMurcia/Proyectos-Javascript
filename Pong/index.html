@@ -18,7 +18,6 @@
         <div class="botones" id="botones">
             <button class="pausa" onclick="pantalla_pausa()" id="pausa"></button>
             <button class="musica" onclick="activar_sonido()" id="musica"></button> 
-            <button class="reiniciar" onclick="reiniciar_juego()" id="reiniciar"></button>
             <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
         </div> <br>
         <div class="configuraciones" id="configuraciones">
@@ -39,8 +38,31 @@
                     </li>
                 </ol>
             </div>
+            <h3> Bola </h3>
+            <div id="colores_bola">
+                <ol>
+                    <li v-for="color in colores">
+                        <button class="boton-color" v-on:click="elegir(color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
             <h3> Fondo </h3>
+            <div id="fondo_juego">
+                <ol>
+                    <li v-for="fondo in fondos">
+                        <button class="boton-fondo" v-on:click="elegir(fondo.tipo)" v-bind:style="{ backgroundImage: 'url(' + fondo.valor + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
             <h3> Jugar </h3>
+            <div id="modo_juego">
+                <label>  Computadora
+                    <input class="modo_juego" type="radio" name="modo_juego" value="PC" checked>
+                </label>
+                <label>  2 jugadores
+                    <input class="modo_juego" type="radio" name="modo_juego" value="P2">
+                </label>
+            </div>
             <h3> Preview </h3>
         </div>
         <div id="contenedor"></div> 

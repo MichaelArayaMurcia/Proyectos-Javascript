@@ -1,7 +1,7 @@
 class Juego {
     constructor(){
-        this.largo = 400;
-        this.ancho = 300;
+        this.largo = windowWidth - 30; //400
+        this.ancho = windowWidth - 170; //300
         this.velocidad = 3;
         this.running = true;
         this.empezar = false;
@@ -9,7 +9,9 @@ class Juego {
         this.fondo = fondo_clasico;
         this.imagen_derecha = color_rojo;
         this.imagen_izquierda = color_azul;
-    }
+        this.imagen_bola = bola_img;
+        this.modo = "";
+        }
 }
 
 class Pong {
@@ -41,7 +43,7 @@ class Bola {
         this.ancho = 10;
         this.dx = 1.8;
         this.dy = 2;
-        this.imagen = bola_img;
+        this.imagen = juego.imagen_bola;
         this.hit_ball = new Audio("https://ia601407.us.archive.org/22/items/pointscored/BallHitBat.mp3");
         this.hit_wall = new Audio("https://ia801407.us.archive.org/22/items/pointscored/BallHitWall.mp3");
         this.scored = new Audio("https://ia601407.us.archive.org/22/items/pointscored/PointScored.mp3");
@@ -100,17 +102,20 @@ function preload(){
     color_verde = loadImage("https://i.ibb.co/jRLDZqs/28-Breakout-Tiles.png");
     //---------------------------------------------------
     fondo_clasico = loadImage("https://i.ibb.co/4fN1xSc/pong-fondo.png");
+    fondo_espacio = loadImage("https://i.ibb.co/fdHfKS5/parallax-space-backgound.png");
+    fondo_montana = loadImage("https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png");
 }
 
 function manejar_pongs(){
     pong_izquierdo.show();
-    if(bola.y < pong_izquierdo.y){
-        pong_izquierdo.dy = -juego.velocidad;
+    if(juego.modo === "PC"){
+        if(bola.y < pong_izquierdo.y){
+            pong_izquierdo.dy = -juego.velocidad;
+        }
+        else if(bola.y > pong_izquierdo.y + pong_izquierdo.ancho){
+            pong_izquierdo.dy = juego.velocidad;
+        }
     }
-    else if(bola.y > pong_izquierdo.y + pong_izquierdo.ancho){
-        pong_izquierdo.dy = juego.velocidad;
-    }
-        
     pong_izquierdo.update();
     pong_derecho.show();
     pong_derecho.update();   
@@ -150,14 +155,14 @@ function manejo_sonido(){
 }
 
 function empezar_juego(){
-    let div_menu = document.getElementById("menu");
-    let div_canvas = document.getElementById("contenedor");
-    let div_botones = document.getElementById("botones");
-    let div_config = document.getElementById("configuraciones");
-
-    
+    const div_menu = document.getElementById("menu");
+    const div_canvas = document.getElementById("contenedor");
+    const div_botones = document.getElementById("botones");
+    const div_config = document.getElementById("configuraciones");
+    const modo_juego = document.querySelector(".modo_juego:checked").value;
     
     juego.empezar = true;
+    juego.modo = modo_juego;
     
     div_menu.style.display = "none";
     div_botones.style.display = "inline-block";
@@ -183,11 +188,6 @@ function configurar_juego(){
     div_botones.style.display = "none";
     div_config.style.display = "inline-block";
     
-}
-
-function reiniciar_juego(){
-    empezar_juego();
-    juego.running = true;
 }
 
 function pantalla_pausa(){
@@ -228,7 +228,7 @@ function activar_sonido(){
     }
 }
 
-function actualizar(){
+function actualizar_pantalla(){
     image(juego.fondo,-1,0,juego.largo+10,juego.ancho+10);
     if(juego.running){
         manejar_pongs();
@@ -245,22 +245,31 @@ function actualizar(){
 
 function touchMoved(){
     if(juego.empezar){
-        pong_derecho.y = mouseY;
+        if(mouseX > juego.largo / 2){
+            pong_derecho.y = mouseY;
+        }
+        else if(juego.modo === "P2" && mouseX < juego.largo / 2){
+            pong_izquierdo.y = mouseY;
+        }
     }
 }
 
 function keyPressed(){
     if(juego.empezar){
-        switch(keyCode){
-            case(UP_ARROW):
-                pong_derecho.dy -= juego.velocidad;
-                break;
-            case(DOWN_ARROW):
-                pong_derecho.dy += juego.velocidad;
-                break;
-            case(32): // Barra espaciadora
-                pantalla_pausa();
-                break;
+        if(keyCode === UP_ARROW){
+            pong_derecho.dy -= juego.velocidad;
+        }
+        else if(keyCode === DOWN_ARROW){
+            pong_derecho.dy += juego.velocidad;
+        }
+        else if(keyCode === 32){ // Barra espaciadora
+            pantalla_pausa();
+        }
+        else if(juego.modo === "P2" && keyCode === 87){ //W
+            pong_izquierdo.dy = -juego.velocidad;
+        }
+        else if(juego.modo === "P2" && keyCode === 83){ //S
+            pong_izquierdo.dy = juego.velocidad;
         }
     }
 }
@@ -269,12 +278,9 @@ function keyReleased(){
     if(juego.empezar){
         if (key != " ") {
             pong_derecho.dy = 0;
+            pong_izquierdo.dy = 0;
         }
     }
-}
-
-function elegir(imagen){
-    pong_derecho.imagen = imagen;
 }
 
 function setup(){
@@ -314,11 +320,43 @@ new Vue({
             }
         }
     })
+new Vue({
+        el: "#colores_bola",
+        data: {
+            colores: [
+                {tipo: color_rojo,      valor: "https://i.ibb.co/YhrHWY8/24-Breakout-Tiles.png"},
+                {tipo: color_azul,      valor: "https://i.ibb.co/Ch4V99D/27-Breakout-Tiles.png"},
+                {tipo: color_amarillo,  valor: "https://i.ibb.co/vZByHrh/26-Breakout-Tiles.png"},
+                {tipo: color_verde,     valor: "https://i.ibb.co/jRLDZqs/28-Breakout-Tiles.png"},
+                {tipo: bola_img,        valor: "https://i.ibb.co/qCP3MYV/58-Breakout-Tiles.png"}
+            ],
+        },
+        methods: {
+            elegir : function(imagen){
+                juego.imagen_bola = imagen;
+            }
+        }
+    })
+new Vue({
+    el: "#fondo_juego",
+    data: {
+        fondos : [
+            {tipo: fondo_clasico,   valor: "https://i.ibb.co/4fN1xSc/pong-fondo.png"},
+            {tipo: fondo_espacio,   valor: "https://i.ibb.co/fdHfKS5/parallax-space-backgound.png"},
+            {tipo: fondo_montana,   valor: "https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png"}
+        ],
+    },
+    methods: {
+        elegir : function(imagen){
+            juego.fondo = imagen;    
+        }    
+    }
+})
 //------------------------------------------
 }
 
 function draw(){
     if(juego.empezar){
-        actualizar();
+        actualizar_pantalla();
     }
 }
