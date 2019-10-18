@@ -7,18 +7,41 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.sound.js"></script>
-        <script src="main.js"></script>
-        <<link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://fontlibrary.org/face/video-game-font" type="text/css"/>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     </head>
     <body>
         <div class="menu" id="menu">
-            <button onclick="empezar_juego()" id="boton" value="this"></button>
+            <h1> Arkanoid !</h1>
+            <button class="empezar menu-item" onclick="empezar_juego()" id="empezar" value="this"></button><br>
+            <!--<button class="ayudar menu-item" onclick="ayudar_juego()" id="ayudar"></button><br>-->
+            <button class="configurar menu-item" onclick="configurar_juego()" id="configurar"></button>
         </div>
         <div class="botones" id="botones">
             <button class="pausa" onclick="pausar_juego()" id="pausa"></button>
             <button class="musica" onclick="activar_sonido()" id="musica"></button> 
             <button class="reiniciar" onclick="reiniciar_juego()" id="reiniciar"></button>
+            <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
         </div> <br>
+        <div class="configuraciones" id="configuraciones">
+            <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
+            <h3> Bola </h3>
+            <div id="colores_bola">
+                <ol>
+                    <li v-for="color in colores">
+                        <button class="boton-color" v-bind:class="{ active: color.selected }" v-on:click="elegir(color,color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
+            <h3> Fondo </h3>
+            <div id="fondo_juego">
+                <ol>
+                    <li v-for="fondo in fondos">
+                        <button class="boton-fondo" v-bind:class="{ active: fondo.selected }" v-on:click="elegir(fondo,fondo.tipo)" v-bind:style="{ backgroundImage: 'url(' + fondo.valor + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
+        </div>
         <div id="contenedor">
         </div>
     </body>

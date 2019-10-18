@@ -14,13 +14,14 @@ class Jugador{
         this.bolas = [];
 
         this.disparar = false;
+        this.imagen = tabla;
     }
     mostrar(){
         this.x += this.velocidad;
         if(this.x + this.largo > juego.largo || this.x < 0){
             this.x += -this.velocidad;
         }
-        image(tabla,this.x,this.y,this.largo,this.ancho);
+        image(this.imagen,this.x,this.y,this.largo,this.ancho);
     }
 }
 
@@ -34,13 +35,13 @@ class Bola{
         
         this.dx = 1;
         this.dy = -2;
-        
+        this.imagen = juego.bola_img;
         this.sonido = new Audio("https://archive.org/download/bouncemp3/Bounce_mp3.mp3");
   }
     mostrar(){
         this.x += this.dx;
         this.y += this.dy;
-        image(bolas,this.x,this.y,this.largo,this.ancho);
+        image(this.imagen,this.x,this.y,this.largo,this.ancho);
   }
     rebotar(){
         //------------------ Vertical -------------
@@ -124,8 +125,6 @@ class Brick_comodin extends Brick{
         this.tipo = Math.trunc(random(1,8));
         
         this.sonido = new Audio("https://archive.org/download/bonus_brick/bonus_brick.mp3");
-        // this.sonido = document.createElement('audio');
-        // this.sonido.src = "https://archive.org/download/bonus_brick/bonus_brick.mp3";
     }
     caer(){
         this.ancho = 20;
@@ -163,7 +162,6 @@ class Brick_comodin extends Brick{
         this.y < jugador.y + jugador.ancho && 
         this.y + this.ancho > jugador.y)
         {
-           // this.sonido.play();
             return true;
         }
     }
@@ -172,6 +170,7 @@ class Brick_comodin extends Brick{
             switch(this.tipo){
                 case(1):
                     jugador.disparar = true;
+                    jugador.imagen = canon;
                     break;
                 case(2):
                     if(jugador.largo === 80){
@@ -179,7 +178,6 @@ class Brick_comodin extends Brick{
                     }else{
                         jugador.largo += 20;
                     }
-                    jugador.largo += 20;
                     break;
                 case(3):
                     jugador.puntaje += 100;
@@ -220,7 +218,7 @@ class Juego{
         this.filas = 5;
         this.columnas = 10;
         this.largo = 400;
-        this.ancho = 400;
+        this.ancho = 350;
         this.balas = 2;
         this.velocidad = 3;
         
@@ -230,6 +228,8 @@ class Juego{
         this.disparo = false;
         this.musica = false;
         
+        this.bola_img = bola_img;
+        this.fondo = fondo_clasico;
         this.colores = [amarillo,azul,rojo,verde,cafe,gris,morado,naranja];
         this.bricks = [];
     }
@@ -257,11 +257,23 @@ class Bala{
 function preload(){
     //-----------------------------------------------------------------
         base = loadImage("https://i.ibb.co/mzPj67g/base.png");
-        bolas = loadImage("https://i.ibb.co/qCP3MYV/58-Breakout-Tiles.png");
         tabla = loadImage("https://i.ibb.co/ThPDzPW/50-Breakout-Tiles.png");
         vida = loadImage("https://i.ibb.co/m8wVTJY/60-Breakout-Tiles.png");
         estrellas = loadImage("https://i.ibb.co/FqsYsh8/59-Breakout-Tiles.png");
         laser = loadImage("https://i.ibb.co/nm1J3WW/61-Breakout-Tiles.png");
+        canon = loadImage("https://i.ibb.co/1KNc8r3/53-Breakout-Tiles.png");
+    //-------------------------- Bolas --------------------------------
+        bola_img = loadImage("https://i.ibb.co/qCP3MYV/58-Breakout-Tiles.png");
+        masterball = loadImage("https://i.ibb.co/fqhwsM8/ultra-ball.png");
+        football = loadImage("https://i.ibb.co/v3qt9sc/football.png");
+        beachball = loadImage("https://i.ibb.co/nfVGtbW/beach-ball.png");
+        baseball = loadImage("https://i.ibb.co/xYVSxm4/baseball.png");
+        basketball = loadImage("https://i.ibb.co/pxJZbx6/basketball-ball.png");
+    //----------------------------------------------------------------------
+        color_azul = loadImage("https://i.ibb.co/Ch4V99D/27-Breakout-Tiles.png");
+        color_rojo = loadImage("https://i.ibb.co/YhrHWY8/24-Breakout-Tiles.png");
+        color_amarillo = loadImage("https://i.ibb.co/vZByHrh/26-Breakout-Tiles.png");
+        color_verde = loadImage("https://i.ibb.co/jRLDZqs/28-Breakout-Tiles.png");
     //-------------------------- Bricks --------------------
         amarillo = loadImage("https://i.ibb.co/YNZKGND/13-Breakout-Tiles.png");
         azul = loadImage("https://i.ibb.co/K69qmf9/11-Breakout-Tiles.png");
@@ -282,6 +294,10 @@ function preload(){
         puntos_100 = loadImage("https://i.ibb.co/tMpGsjx/38-Breakout-Tiles.png");
         puntos_250 = loadImage("https://i.ibb.co/Rbd3wHR/39-Breakout-Tiles.png");
         puntos_500 = loadImage("https://i.ibb.co/55ZK2PS/40-Breakout-Tiles.png");
+    //---------------------------- Fondos --------------------------------
+        fondo_clasico = loadImage("https://i.ibb.co/k9QBgj7/purple.png");
+        fondo_espacio = loadImage("https://i.ibb.co/fdHfKS5/parallax-space-backgound.png");
+        fondo_montana = loadImage("https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png");
 }
 
 function manejo_bolas(){
@@ -305,7 +321,7 @@ function manejo_jugador(){
         juego.gameover = true;
     }
     for(let i = 0; i < jugador.vidas;i++){
-        image(vida,280 + (i * 20),370,20,20);
+        image(vida,280 + (i * 20),juego.ancho - 30,20,20);
     }
     for(let j in jugador.balas){
         let bala = jugador.balas[j];
@@ -355,10 +371,6 @@ function pausar_juego(){
     } else {
         boton.style.backgroundImage = "url('https://i.ibb.co/hcG43SC/Icon-Play.png')"
     }
-}
-
-function reiniciar_juego(){
-    empezar_juego();
 }
 
 function activar_sonido(){
@@ -425,11 +437,14 @@ function destruir_objetos(){
 
 function disparar_balas(){
     if(jugador.balas.length < juego.balas && jugador.disparar === true){
-        bala = new Bala();
+        bala1 = new Bala();
+        bala2 = new Bala();
+        bala2.x = (jugador.x + jugador.largo) - bala2.largo;
         if(juego.musica){
-            bala.sonido.play();
+            bala1.sonido.play();
         }
-        jugador.balas.push(bala);
+        jugador.balas.push(bala1);
+        jugador.balas.push(bala2);
         return true;
     }   
 }
@@ -462,31 +477,52 @@ function crear_bloques(){
 } 
 
 function empezar_juego(){
-    let btn_play = document.getElementById("boton");
-    let cnv = document.getElementById("contenedor");
+    let btn_play = document.getElementById("empezar");
     let menu = document.getElementById("menu");
+    let btn_reiniciar = document.getElementById("reiniciar");
+    let cnv = document.getElementById("contenedor");
     let botones = document.getElementById("botones");
-    let reiniciar = document.getElementById("reiniciar");
+    let btn_pausa = document.getElementById("pausa");
+    let btn_sonido = document.getElementById("musica");
     
     juego.empezar = true;
     juego.gameover = false;
     
     btn_play.style.display = 'none';
-    cnv.style.display = 'inline-block';
-    cnv.style.border = "solid black";
     menu.style.display = 'none';
-    botones.style.display = "inline-block"
-    reiniciar.style.display = "none";
+    btn_reiniciar.style.display = "none";
+    cnv.style.display = 'inline-block';
+    botones.style.display = "inline-block";
+    btn_pausa.style.display = "inline-block";
+    btn_sonido.style.display = "inline-block";
     
     jugador = new Jugador();
+    jugador.y = juego.ancho - 60;
     let x = jugador.x + jugador.largo / 2;
     let y = jugador.y - 20;
     jugador.bolas.push(new Bola(x,y));
+    juego.bricks = [];
     crear_bloques(); 
-    console.log("Funciono");
 }
 
 function terminar_juego(){
+    let div_menu = document.getElementById("menu");
+    let div_canvas = document.getElementById("contenedor");
+    let div_botones = document.getElementById("botones");
+    let div_config = document.getElementById("configuraciones");
+    let btn_empezar = document.getElementById("empezar");
+    
+    div_menu.style.display = "inline-block";
+    btn_empezar.style.display = "inline-block";
+    div_canvas.style.display = "none";
+    div_botones.style.display = "none";
+    div_config.style.display = "none";
+    
+    juego.empezar = false;
+    juego.running = true;
+}
+
+function juego_terminado(){
     let pausa = document.getElementById("pausa");
     let sonido = document.getElementById("musica");
     let reiniciar = document.getElementById("reiniciar");
@@ -496,71 +532,161 @@ function terminar_juego(){
     reiniciar.style.display = "inline-block";  
 }
 
+function reiniciar_juego(){
+    empezar_juego();
+}
+
+function configurar_juego(){
+    let div_menu = document.getElementById("menu");
+    let div_botones = document.getElementById("botones");
+    let div_canvas = document.getElementById("contenedor");
+    let div_config = document.getElementById("configuraciones");
+    
+    div_menu.style.display = "none";
+    div_canvas.style.display = "none";
+    div_botones.style.display = "none";
+    div_config.style.display = "inline-block";
+    
+}
+
 function actualizar(){
     let posX = juego.largo / 2;
     let posY = juego.ancho / 2;
     
-    background(0);
-    image(base,0,350,width,50);
-    image(estrellas,10,370,20,20);
+    image(juego.fondo,0,0,juego.largo,juego.ancho);
+    image(base,0,juego.ancho - 50,width,50);
+    image(estrellas,10,juego.ancho - 30,20,20);
     if(!juego.gameover){
         if(juego.running){
             manejo_jugador();
             manejo_bolas();
             manejo_bricks();
             manejo_sonido();
-        
             destruir_objetos();
-            text("Puntaje: " + jugador.puntaje,10,370);
+            fill(0);
+            textFont("ArcadeClassicRegular");
+            textSize(16);
+            textAlign(LEFT);
+            text("Puntaje: " + jugador.puntaje,10,juego.ancho - 30);
         }
         else{
-            fill(255);
-            text("Pausa",posX,posY);
+        fill(255);
+        textFont("ArcadeClassicRegular");
+        textSize(32);
+        textAlign(CENTER);
+        text("Pausa",posX,posY);
         }
     }
     else{
-        terminar_juego();
+        juego_terminado();
+        textFont("ArcadeClassicRegular");
+        textSize(32);
+        textAlign(CENTER);
         fill(255);
         text("Perdio",posX,posY); 
-        text("Puntuacion " + jugador.puntaje,posX,posY + 10);
+        fill(0);
+        text("Puntuacion: " + jugador.puntaje,posX,posY + 30);
     }
 }
 //-------------------------------------------------------
 function keyPressed(){
-  switch(keyCode){
-    case(RIGHT_ARROW): //Flecha derecha
-        jugador.velocidad = juego.velocidad;
-        break;
-    case(LEFT_ARROW): //Flecha izquierda
-        jugador.velocidad = -  juego.velocidad;
-        break;
-    case(UP_ARROW):
-        disparar_balas();
-        break;
-    case(32):       //Barra de espacio
-        pausar_juego();
-        break;
-  }
+    if(juego.empezar){
+        switch(keyCode){
+            case(RIGHT_ARROW): //Flecha derecha
+                jugador.velocidad = juego.velocidad;
+                break;
+            case(LEFT_ARROW): //Flecha izquierda
+                jugador.velocidad = -  juego.velocidad;
+                break;
+            case(UP_ARROW):
+                disparar_balas();
+                break;
+            case(32):       //Barra de espacio
+                pausar_juego();
+                break;
+        }
+    }
 }
 
 function touchStarted(){
-    disparar_balas();
+    if(juego.empezar){
+        disparar_balas();
+    }
 }
 
 function touchMoved(){
-    jugador.x = mouseX; 
+    if(juego.empezar){
+        jugador.x = mouseX;
+    }
 }
 
 function mouseMoved() {
-    jugador.velocidad = 0;
-    jugador.x = mouseX;
+    if(juego.empezar){
+        jugador.velocidad = 0;
+        jugador.x = mouseX;
+    }
 }
 
 function setup(){
+    frameRate(30);
     juego = new Juego();
     let canvas = createCanvas(juego.largo,juego.ancho);
     canvas.parent("contenedor");
-    
+    let fondo_juego = new Vue({
+    el: "#fondo_juego",
+    data: {
+        fondos : [
+        {tipo: fondo_clasico, valor: "https://i.ibb.co/k9QBgj7/purple.png", selected: true},
+        {tipo: fondo_espacio, valor: "https://i.ibb.co/fdHfKS5/parallax-space-backgound.png", selected: false},
+        {tipo: fondo_montana, valor: "https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png", selected: false}
+        ],
+    },
+    methods: {
+        elegir : function(boton,imagen){
+            let index = this.fondos.indexOf(boton);
+            for(let i = 0; i < this.fondos.length; i++){
+                if(i === index){
+                    this.fondos[index].selected = true;
+                }
+                else {
+                    this.fondos[i].selected = false;
+                }
+            }
+            juego.fondo = imagen;    
+        }    
+    }
+})
+    let colores_bola = new Vue({
+        el: "#colores_bola",
+        data: {
+            colores: [
+            {tipo: color_rojo,      valor: "https://i.ibb.co/YhrHWY8/24-Breakout-Tiles.png", selected: false},
+            {tipo: color_azul,      valor: "https://i.ibb.co/Ch4V99D/27-Breakout-Tiles.png", selected: false},
+            {tipo: color_amarillo,  valor: "https://i.ibb.co/vZByHrh/26-Breakout-Tiles.png", selected: false},
+            {tipo: color_verde,     valor: "https://i.ibb.co/jRLDZqs/28-Breakout-Tiles.png", selected: false},
+            {tipo: bola_img,        valor: "https://i.ibb.co/qCP3MYV/58-Breakout-Tiles.png", selected: true},
+            {tipo: masterball,      valor: "https://i.ibb.co/fqhwsM8/ultra-ball.png",        selected: false},
+            {tipo: football,        valor: "https://i.ibb.co/v3qt9sc/football.png",          selected: false},
+            {tipo: beachball,       valor: "https://i.ibb.co/nfVGtbW/beach-ball.png",        selected: false},
+            {tipo: baseball,        valor: "https://i.ibb.co/xYVSxm4/baseball.png",          selected: false},
+            {tipo: basketball,      valor: "https://i.ibb.co/pxJZbx6/basketball-ball.png",   selected: false}
+            ],
+        },
+        methods: {
+            elegir : function(boton,imagen){
+                let index = this.colores.indexOf(boton);
+                for(let i = 0; i < this.colores.length; i++){
+                    if(i === index){
+                        this.colores[index].selected = true;
+                    }
+                    else {
+                        this.colores[i].selected = false;
+                    }
+                }
+                juego.bola_img = imagen;
+            }
+        }
+    })
 }
 
 function draw(){
