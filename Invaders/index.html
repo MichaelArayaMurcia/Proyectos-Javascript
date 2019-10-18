@@ -2,9 +2,33 @@
 <html>
     <head>
         <title>Invaders</title>
+        <link rel="stylesheet" href="https://fontlibrary.org/face/video-game-font" type="text/css"/>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     </head>
     <body>
-        <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script> 
-        <script src="main.js"></script>
+        <div class="menu" id="menu">
+            <h1> Space Invaders !</h1>
+            <button class="empezar menu-item" onclick="empezar_juego()" id="empezar" value="this"></button><br>
+            <!--<button class="ayudar menu-item" onclick="ayudar_juego()" id="ayudar"></button><br>-->
+            <button class="configurar menu-item" onclick="configurar_juego()" id="configurar"></button>
+        </div>
+        <div class="botones" id="botones">
+            <button class="pausa" onclick="pantalla_pausa()" id="pausa"></button>
+            <button class="musica" onclick="activar_sonido()" id="musica"></button> 
+            <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
+        </div> <br>
+        <div class="configuraciones" id="configuraciones">
+            <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
+            <h3> Fondo </h3>
+            <div id="fondo_juego">
+                <ol>
+                    <li v-for="fondo in fondos">
+                        <button class="boton-fondo" v-bind:class="{ active: fondo.selected }" v-on:click="elegir(fondo,fondo.tipo)" v-bind:style="{ backgroundImage: 'url(' + fondo.valor + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div id="contenedor"></div> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script> 
     </body>
 </html>
