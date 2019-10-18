@@ -27,20 +27,23 @@ function empezar_juego(){
     div_datos.style.display = "inline-block";
     div_tablero.style.display = "block";
     
+    
     for(let i = 0; i < numero_filas; i++){
+        let fila = [];
+        tablero.push(fila);
         for(let j = 0; j < numero_columnas; j++){
             let boton = document.createElement("button");
             boton.setAttribute("onclick","jugar(this)");
             boton.classList.add("botones");
             div_tablero.appendChild(boton);
-            tablero.push(boton);
+            tablero[i][j] = boton;
+            // console.log("tablero["+[i]+"]"+"["+[j]+"]");
         }
+        
         let salto = document.createElement("br");
         div_tablero.appendChild(salto);
     }
-    
 }
-
 
 function jugar(boton){
     const eleccion_jugador = document.getElementById("imagen_jugador");
@@ -50,7 +53,6 @@ function jugar(boton){
     boton.style.backgroundImage = 'url('+imagen_jugador_src+')';
     boton.style.backgroundSize = "100%";
     boton.setAttribute("disabled",true);
-    boton.setAttribute("value",eleccion_jugador);
     boton.setAttribute("value",eleccion_jugador_valor);
     boton.setAttribute("onclick",revisar(boton));
     
@@ -66,27 +68,38 @@ function jugar(boton){
 }
 
 function revisar(boton){
-    if(jugado){
-        if(tablero[0].getAttribute("value") == tablero[1].getAttribute("value") && 
-            tablero[1].getAttribute("value") == tablero[2].getAttribute("value"))
+        // Columnas y filas
+    const numero_columnas = document.getElementById("numero_columnas").value;
+    const numero_filas = document.getElementById("numero_filas").value;
+    
+    for(let i = 0; i < numero_filas; i++){
+        if(tablero[i][0].getAttribute("value") === tablero[i][1].getAttribute("value") && 
+           tablero[i][1].getAttribute("value") === tablero[i][2].getAttribute("value") && 
+           tablero[i][0].getAttribute("value") !== null)
         {
-                console.log("Gano");
+            let resultado = document.getElementById("resultado");
+            resultado.innerHTML = "Ganó " + tablero[i][0].getAttribute("value");
         }
     }
-    else {
-        jugado = true;
-    }
-}
-
-function crear(){
-    // Columnas y filas
-    let numero_columnas = document.getElementById("numero_columnas").value;
-    let numero_filas = document.getElementById("numero_filas").value;
-    let total = (numero_columnas * numero_filas);
     
-    for(let i = 0; i < total;i++){
-
-
+    for(let j = 0; j < numero_columnas; j++){
+        if(tablero[0][j].getAttribute("value") === tablero[1][j].getAttribute("value") && 
+           tablero[1][j].getAttribute("value") === tablero[2][j].getAttribute("value") && 
+           tablero[0][j].getAttribute("value") !== null)
+        {
+            let resultado = document.getElementById("resultado");
+            resultado.innerHTML = "Ganó " + tablero[0][j].getAttribute("value");
+        }
     }
-
+    
+    // for(let k = 0; k < numero_columnas; k++){
+    //     if(tablero[0][k].getAttribute("value") === tablero[1][k+1].getAttribute("value") && 
+    //       tablero[1][k+1].getAttribute("value") === tablero[2][k+2].getAttribute("value") && 
+    //       tablero[0][k].getAttribute("value") !== null)
+    //     {
+    //         let resultado = document.getElementById("resultado");
+    //         resultado.innerHTML = "Ganó " + tablero[0][k].getAttribute("value");
+    //     }
+    // }
+    
 }
