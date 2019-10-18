@@ -1,0 +1,120 @@
+body {
+    background-color: #e21d63;
+    font-family: "ArcadeClassicRegular", arial;    
+}
+
+.menu {
+    background-color: #63E21D;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    border: solid black;
+}
+
+.menu-item {
+    margin: 5px 0px;
+}
+
+#contenedor {
+    display: none;
+    margin-top: 10px;
+}
+
+.empezar {
+    width: 30px;
+    height: 30px;
+    background: url("https://i.ibb.co/jDR2DN7/Icon-Play.png");
+    background-size: 100%;
+}
+
+.botones {
+    display: none;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.musica {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    background-Image: url("https://i.ibb.co/wYTqYbL/Vector-Sound-Muted.png");
+    background-size: 100%;
+    border: solid black;
+}
+
+.pausa {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    background-Image: url("https://i.ibb.co/GJTLcv7/Icon-Pause2.png");
+    background-size: 100%;
+    border: solid black;
+}
+
+.reiniciar {
+    width: 30px;
+    height: 30px;
+    display: none;
+    background-Image: url("https://i.ibb.co/sjnThcr/Icon-Repeat.png");
+    background-size: 100%;
+    border: solid black;
+}
+
+.terminar {
+    width: 30px;
+    height: 30px;
+    background-Image: url("https://i.ibb.co/0tGsGbH/Icon-Home.png");
+    background-size: 100%;
+    border: solid black;
+    background-repeat: no-repeat;
+}
+
+.configurar {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-Image: url("https://i.ibb.co/2gfFd9V/Icon-Settings.png");
+    background-size: 100%;
+    border: solid black;
+    background-repeat: no-repeat;
+}
+
+.configuraciones {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: #1D63E2;
+    border: solid black;
+}
+
+.configuraciones h3 {
+    margin-left: 10px;
+    color: black;
+}
+
+li{
+    display: inline-block;
+    margin-left: 5px;
+}
+
+
+.active {
+    border: solid red;
+}
+.boton-color {
+    background-size: 100%;
+    height: 30px;
+    width: 30px;
+}
+
+.boton-fondo {
+    height: 100px;
+    width: 100px;
+    background-size: 100% 100%;
+}
+
+label {
+    margin-left: 20px;
+}

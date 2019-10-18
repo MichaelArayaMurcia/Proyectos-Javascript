@@ -2,10 +2,9 @@ class Juego{
     constructor(){
         this.largo = 400;
         this.ancho = 300;
-        this.vidas = 3;
-        this.puntuacion = 0;
-        this.record = 0;
-        this.pausa = false;
+        this.running = true;
+        this.empezar = false;
+        this.musica = false;
         this.gameover = false;
         this.enemigos = [];
     }
@@ -36,12 +35,17 @@ class Jugador{
         this.gravedad = 0.6;
         this.fuerza = -12;
         this.dy = 0;
+        this.vidas = 3;
+        this.puntuacion = 0;
+        this.record = 0;
+        this.imagen = player;
         this.saltando = false;
         
     }
     mostrar(){
-        fill(0,255,0);
-        image(player,this.x,this.y,this.largo,this.ancho);
+        this.imagen.size(this.largo,this.ancho);
+        this.imagen.position(this.x + 5,this.y + this.ancho + 5);
+
     }
     saltar(){
         if(!this.saltando){
@@ -80,8 +84,12 @@ class Obstaculo{
         this.imagen = null;
     }
     mostrar(){
-        fill(255,0,0);
-        image(this.imagen,this.x,this.y,this.largo,this.ancho);
+        if(this.imagen === spike){
+            image(this.imagen,this.x,this.y,this.largo,this.ancho);
+        }
+        else if(this.imagen === fly){
+            this.imagen.position(this.x,this.y + this.ancho);
+        }
     }
     chocar(){
     if(this.x < jugador.x + jugador.largo  && this.x + this.largo  > jugador.x &&
@@ -95,12 +103,97 @@ class Obstaculo{
 }
 
 function touchStarted(){
-    jugador.saltar();
+    if(juego.empezar){
+        jugador.saltar();
+    }
+}
+
+function empezar_juego(){
+//     let btn_play = document.getElementById("empezar");
+//     let div_menu = document.getElementById("menu");
+//     let btn_reiniciar = document.getElementById("reiniciar");
+//     let div_botones = document.getElementById("botones");
+//     let btn_pausa = document.getElementById("pausa");
+//     let btn_sonido = document.getElementById("musica");
+//     let btn_salir = document.getElementById("terminar");
+    
+    juego.empezar = true;
+    juego.running = true;
+    juego.gameover = false;
+    
+    let div_menu = document.getElementById("menu");
+    let div_botones = document.getElementById("botones");
+    let div_canvas = document.getElementById("contenedor");
+    let div_config = document.getElementById("configuraciones");
+    
+    div_menu.style.display = "none";
+    div_canvas.style.display = "inline-block";
+    div_botones.style.display = "inline-block";
+    div_config.style.display = "none";
+    
+    jugador = new Jugador();
+    player.show();
+    if(juego.enemigos.length < 1){
+        crear_enemigos();
+    }
+}
+
+function configurar_juego(){
+    let div_menu = document.getElementById("menu");
+    let div_botones = document.getElementById("botones");
+    let div_canvas = document.getElementById("contenedor");
+    let div_config = document.getElementById("configuraciones");
+    
+    div_menu.style.display = "none";
+    div_canvas.style.display = "none";
+    div_botones.style.display = "none";
+    div_config.style.display = "inline-block";
+}
+
+function terminar_juego(){
+    let div_menu = document.getElementById("menu");
+    let div_canvas = document.getElementById("contenedor");
+    let div_botones = document.getElementById("botones");
+    let div_config = document.getElementById("configuraciones");
+    
+    div_menu.style.display = "inline-block";
+    div_canvas.style.display = "none";
+    div_botones.style.display = "none";
+    div_config.style.display = "none";
+    
+    player.hide();
+    fly.hide();
+    
+    juego.empezar = false;
+    juego.running = true;
+}
+
+function pantalla_pausa(){
+    let boton = document.getElementById("pausa");
+    
+    juego.running = !juego.running;
+    if(juego.running){
+        boton.style.backgroundImage = "url('https://i.ibb.co/GJTLcv7/Icon-Pause2.png')"
+    } else {
+        boton.style.backgroundImage = "url('https://i.ibb.co/hcG43SC/Icon-Play.png')"
+    }
+}
+
+function activar_sonido(){
+    let boton = document.getElementById("musica");
+    
+    juego.musica = !juego.musica;
+    
+    if(juego.musica){
+        boton.style.backgroundImage = "url('https://i.ibb.co/B6HJ7dr/Vector-Soun-On.png')";
+    } else {
+        boton.style.backgroundImage = "url('https://i.ibb.co/wYTqYbL/Vector-Sound-Muted.png')";
+    }
 }
 
 function crear_enemigos(){
     obstaculo = new Obstaculo(); 
-    let choice = Math.floor(random(0,3));
+    let choice = Math.floor(random(0,2));
     if(choice === 0){
         obstaculo.imagen = spike;
     } 
@@ -117,58 +210,79 @@ function crear_enemigos(){
     juego.enemigos.push(obstaculo);
 }
 
+function manejo_jugador(){
+    jugador.mostrar();
+    jugador.update();    
+}
+
 function manejo_enemigos(){
     for (let i in juego.enemigos) {
         enemigo = juego.enemigos[i];
+        if(enemigo.imagen !== fly){
+            fly.hide();
+        } else {
+            fly.show();
+        }
         enemigo.mostrar();
         enemigo.update();
+    }
+    for (let i in juego.enemigos) {
         if(enemigo.chocar()){
-            juego.vidas -= 1;
+            jugador.vidas -= 1;
             enemigo.x = -20;
-            if(juego.puntuacion > juego.record){
-                juego.record = juego.puntuacion;
+            if(jugador.puntuacion > jugador.record){
+                jugador.record = jugador.puntuacion;
             }
-            juego.puntuacion = 0;
+            jugador.puntuacion = 0;
         }
         else if(enemigo.x < 0 - enemigo.largo){
-            juego.puntuacion += 1;
+                if(enemigo.imagen === fly){
+                    enemigo.imagen.hide();
+                }
+            jugador.puntuacion += 1;
             juego.enemigos.splice(i,1);
-            crear_enemigos();
         }
+    }
+    if(juego.enemigos.length < 1){
+        crear_enemigos();
     }
 }
 
-function perder(){
-    if(juego.vidas === 0){
+function perder_partida(){
+    if(jugador.vidas === 0){
         juego.gameover = true;
+        fly.hide();
     }
 }
 
 function actualizar(){
     image(fondo,0,0,juego.largo,juego.ancho);
-    image(fondo2,0,0,juego.largo,juego.ancho);
     image(bases,base1.x,base1.y,base1.largo,base1.ancho);
     image(bases,base2.x,base2.y,base2.largo,base2.ancho);
-    text("Puntuacion " + juego.puntuacion,10,20);
-    text("Record: " + juego.record,200,20);
-    for(let i = 0; i < juego.vidas; i++){
+    textFont("ArcadeClassicRegular");
+    textSize(16);
+    textAlign(LEFT);
+    text("Puntuacion: " + jugador.puntuacion,10,20);
+    text("Record: " + jugador.record,200,20);
+    for(let i = 0; i < jugador.vidas; i++){
         let x = 300;
         image(corazones,x + i * 20,280,20,20);
     }
     if(!juego.gameover){
-        if(!juego.pausa){
-            jugador.mostrar();
-            jugador.update();
+        if(juego.running){
+            manejo_jugador();
             manejo_enemigos();
             base1.update();
             base2.update();
-            perder();
+            perder_partida();
         } else {
-            text("Pausa",juego.largo / 2, 100);
+            textAlign(CENTER);
+            text("Pausa",juego.largo / 2, juego.ancho / 2);
         }
     }
     else{
-        text("Perdio",juego.largo / 2,100);
+        textAlign(CENTER);
+        text("Perdio",juego.largo / 2,juego.ancho / 2);
     }
 }
 
@@ -177,7 +291,7 @@ function keyPressed(){
         jugador.saltar();
     }
     else if(keyCode == 32){
-        juego.pausa = !juego.pausa;
+        pantalla_pausa();
     }
 }
 
@@ -185,22 +299,26 @@ function preload(){
     bases = loadImage("https://i.ibb.co/mzPj67g/base.png");
     fondo = loadImage("https://i.ibb.co/Y8ytqJB/Nuvens.png");
     fondo2 = loadImage("https://i.ibb.co/MgNWtn8/Backgroud1.png");
-    spike = loadImage("https://i.ibb.co/yWBfVMs/spike-Man-stand.png");
-    fly = loadImage("https://i.ibb.co/Rg9KG0J/fly-Man-still-stand.png");
-    wings = loadImage("https://i.ibb.co/GPGKvZh/wingMan2.png");
-    player = loadImage("https://i.ibb.co/VpKLwrR/bunny1-stand.png");
+    spike = loadImage("https://i.ibb.co/TH388MZ/cactus.png");
+    fly = createImg("https://i.ibb.co/LNNKQWH/pajaro2.gif");
+    wings = loadImage("https://i.ibb.co/nDjLsBt/pajaro2.png");
+    player = createImg("https://i.ibb.co/9vddbGP/dinosaurio.gif");
     corazones = loadImage("https://i.ibb.co/m8wVTJY/60-Breakout-Tiles.png");
 }
 
 function setup(){
+    frameRate(30);
     juego = new Juego();
     base1 = new Base(0);
     base2 = new Base(juego.largo);
-    jugador = new Jugador();
-    crear_enemigos();
-    createCanvas(juego.largo,juego.ancho);
+    fly.hide();
+    player.hide();
+    let canvas = createCanvas(juego.largo,juego.ancho);
+    canvas.parent("contenedor");
 }
 
 function draw(){
-    actualizar();
+    if(juego.empezar){
+        actualizar();
+    }
 }
