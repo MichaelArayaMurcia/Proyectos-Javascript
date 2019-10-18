@@ -1,19 +1,17 @@
 body {
-    background: #999;
+    background-image: url("https://i.ibb.co/gdjYZXk/cool-background.png");
+    text-align: center;
 }
 
 .Layout {
-    text-align: center;
+
     display: inline-block;
     border: solid #bbb;
     background: #bbb;
-    margin-left: 40%;
-    margin-top: 10%;
 }
 
 button {
-    padding: 10px;
-    margin-left: 0;
+    margin: 5px 5px;
     width: 50px;
     height: 40px;
     font-size: 18px;
