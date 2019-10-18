@@ -12,7 +12,7 @@
         <div class="menu" id="menu">
             <h1> PONG !</h1>
             <button class="empezar menu-item" onclick="empezar_juego()" id="empezar" value="this"></button><br>
-            <button class="ayudar menu-item" onclick="ayudar_juego()" id="ayudar"></button><br>
+            <!--<button class="ayudar menu-item" onclick="ayudar_juego()" id="ayudar"></button><br>-->
             <button class="configurar menu-item" onclick="configurar_juego()" id="configurar"></button>
         </div>
         <div class="botones" id="botones">
@@ -26,7 +26,7 @@
             <div id="colores_pongderecho">
                 <ol>
                     <li v-for="color in colores">
-                        <button class="boton-color" v-on:click="elegir(color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
+                        <button class="boton-color" v-bind:class="{ active: color.selected }" v-on:click="elegir(color,color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
                     </li>
                 </ol>
             </div>
@@ -34,7 +34,7 @@
             <div id="colores_pongizquierdo">
                 <ol>
                     <li v-for="color in colores">
-                        <button class="boton-color" v-on:click="elegir(color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
+                        <button class="boton-color" v-bind:class="{ active: color.selected }" v-on:click="elegir(color,color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
                     </li>
                 </ol>
             </div>
@@ -42,7 +42,7 @@
             <div id="colores_bola">
                 <ol>
                     <li v-for="color in colores">
-                        <button class="boton-color" v-on:click="elegir(color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
+                        <button class="boton-color" v-bind:class="{ active: color.selected }" v-on:click="elegir(color,color.tipo)" v-bind:style="{ backgroundImage: 'url(' + color.valor + ')' }"></button>
                     </li>
                 </ol>
             </div>
@@ -50,20 +50,19 @@
             <div id="fondo_juego">
                 <ol>
                     <li v-for="fondo in fondos">
-                        <button class="boton-fondo" v-on:click="elegir(fondo.tipo)" v-bind:style="{ backgroundImage: 'url(' + fondo.valor + ')' }"></button>
+                        <button class="boton-fondo" v-bind:class="{ active: fondo.selected }" v-on:click="elegir(fondo,fondo.tipo)" v-bind:style="{ backgroundImage: 'url(' + fondo.valor + ')' }"></button>
                     </li>
                 </ol>
             </div>
             <h3> Jugar </h3>
             <div id="modo_juego">
-                <label>  Computadora
+                <label>  <img id="modo_solo" src="https://i.ibb.co/mTCnxnZ/boton1jugador.png">
                     <input class="modo_juego" type="radio" name="modo_juego" value="PC" checked>
                 </label>
-                <label>  2 jugadores
+                <label>  <img id="modo_2P" src="https://i.ibb.co/Vts36wN/boton2jugadores.png">
                     <input class="modo_juego" type="radio" name="modo_juego" value="P2">
                 </label>
             </div>
-            <h3> Preview </h3>
         </div>
         <div id="contenedor"></div> 
     </body>
