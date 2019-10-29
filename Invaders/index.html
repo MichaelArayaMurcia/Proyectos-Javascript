@@ -2,8 +2,12 @@
 <html>
     <head>
         <title>Invaders</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script> 
         <link rel="stylesheet" href="https://fontlibrary.org/face/video-game-font" type="text/css"/>
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script defer src="main.js"></script>
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js"></script>
     </head>
     <body>
         <div class="menu" id="menu">
@@ -19,16 +23,36 @@
         </div> <br>
         <div class="configuraciones" id="configuraciones">
             <button class="terminar" onclick="terminar_juego()" id="terminar"></button>
-            <h3> Fondo </h3>
+
+            <h3 id="titulo_fondo"> {{ $t("message.fondo") }} </h3>
             <div id="fondo_juego">
                 <ol>
                     <li v-for="fondo in fondos">
-                        <button class="boton-fondo" v-bind:class="{ active: fondo.selected }" v-on:click="elegir(fondo,fondo.tipo)" v-bind:style="{ backgroundImage: 'url(' + fondo.valor + ')' }"></button>
+                        <button class="boton-fondo" v-bind:class="{ active: fondo.selected }" v-on:click="elegir(fondo,fondo.tipo)" v-bind:style="{ backgroundImage: 'url(' + fondo.url + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
+            <h3 id="titulo_nave"> {{ $t("message.nave") }} </h3>
+            <div id="nave_imagen">
+                <ol>
+                    <li v-for="nave in naves">
+                        <button class="boton-fondo" v-bind:class="{ active: nave.selected }" v-on:click="elegir(nave,nave.tipo,nave.laser)" v-bind:style="{ backgroundImage: 'url(' + nave.url + ')' }"></button>
+                    </li>
+                </ol>
+            </div>
+            <h3 id="titulo_lenguaje"> {{ $t("message.lenguaje") }} </h3>
+            <div id="lenguajes_juego">
+                <ol>
+                    <li v-for="idioma in idiomas">
+                        <button class="boton-fondo"
+                        v-bind:class="{ active: idioma.selected }" 
+                        v-on:click="elegir(idioma,idioma.valor)" 
+                        v-bind:style="{ backgroundImage: 'url(' + idioma.url + ')' }"></button>
                     </li>
                 </ol>
             </div>
         </div>
         <div id="contenedor"></div> 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script> 
+        
     </body>
 </html>

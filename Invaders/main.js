@@ -15,7 +15,10 @@ class Juego{
         this.empezar = false;
         this.musica = false;
         this.enemigos = [];
+        this.nave_img = red_ship;
+        this.nave_laser = red_laser;
         this.fondo = fondo_clasico;
+        this.idioma = "es";
         this.sonido = new Audio("http://k007.kiwi6.com/hotlink/7di9miccg9/sfx_laser1.ogg");
     }
 }
@@ -48,14 +51,15 @@ class Nave{
         this.largo = juego.unidad;
         this.ancho = juego.unidad;
         this.balas = [];
-        this.laser = playerlaser;
+        this.imagen = juego.nave_img;
+        this.laser = juego.nave_laser;
     }
     show(){
         this.x += this.dx;
         if(this.x + this.largo > juego.largo || this.x < 0){
             this.x += -this.dx;
         }
-        image(ship,this.x,this.y,this.largo,this.ancho);
+        image(this.imagen,this.x,this.y,this.largo,this.ancho);
     }
     disparar(){
         if(this.balas.length < juego.balas){
@@ -76,8 +80,8 @@ class Enemigo{
         this.caer = 10;
         this.puntaje = 0;
         this.balas = [];
-        this.imagen = null;
-        this.laser = enemylaser;
+        this.imagen = green_enemy;
+        this.laser = green_laser;
     }
     show(){
         image(this.imagen,this.x,this.y,this.largo,this.ancho);
@@ -103,6 +107,7 @@ class Enemigo{
 class Enemigo_no_comodin extends Enemigo {
     constructor(x,y){
         super(x,y);
+        this.laser = green_laser;
         this.comodin = false;
         this.puntaje = 1;
     }
@@ -111,10 +116,12 @@ class Enemigo_no_comodin extends Enemigo {
 class Enemigo_comodin extends Enemigo {
     constructor(x,y){
         super(x,y);
+        this.laser = blue_laser;
         this.comodin = true;
         this.puntaje = 10;
     }
 }
+
 //-----------------------------------------------------------------
 function swap(array, i, j) {
     let temp = array[i];
@@ -166,10 +173,10 @@ function crear_enemigos(){
             comodin = Math.floor(random(0,2));
             if(comodin === 0){
                 enemigo = new Enemigo_no_comodin(x,y); 
-                enemigo.imagen = enemy1;
+                enemigo.imagen = green_enemy;
             } else {
                 enemigo = new Enemigo_comodin(x,y);
-                enemigo.imagen = enemy2;
+                enemigo.imagen = blue_enemy;
             }
             
             juego.enemigos.push(enemigo);
@@ -250,6 +257,7 @@ function empezar_juego(){
     
     nave = new Nave();
     
+    juego.puntuacion = 0;
     juego.enemigos.length = 0;
     
     crear_enemigos();
@@ -328,6 +336,7 @@ function crear_nivel(){
 
 function actualizar(){
     image(juego.fondo,0,0,juego.largo,juego.ancho);
+    textFont("ArcadeClassicRegular");
     if(!juego.gameover){
         if(juego.running){
             manejar_jugador();
@@ -389,45 +398,143 @@ function keyReleased(){
 }
 
 function preload(){
-    ship = loadImage("https://i.ibb.co/qWjf46n/player-Ship1-red.png");
-    enemy1 = loadImage("https://i.ibb.co/9psQc0r/enemy-Green5.png");
-    enemy2 = loadImage("https://i.ibb.co/VCWpR8s/enemy-Blue5.png");
-    playerlaser = loadImage("https://i.ibb.co/F0bYvdD/laser-Red03.png");
-    enemylaser = loadImage("https://i.ibb.co/ynnzchP/laser-Green05.png");
+    red_ship = loadImage("https://i.ibb.co/qWjf46n/player-Ship1-red.png");
+    blue_ship = loadImage("https://i.ibb.co/bbZ81dY/player-Ship1-blue.png");
+    green_ship = loadImage("https://i.ibb.co/GJghyz2/player-Ship1-green.png");
+    orange_ship = loadImage("https://i.ibb.co/GWXtQCf/player-Ship1-orange.png");
+    //--------------------------------------------------------------------- 
+    green_enemy = loadImage("https://i.ibb.co/9psQc0r/enemy-Green5.png");
+    blue_enemy = loadImage("https://i.ibb.co/VCWpR8s/enemy-Blue5.png");
+    //---------------------------------------------------------------------- 
+    red_laser = loadImage("https://i.ibb.co/F0bYvdD/laser-Red03.png");
+    green_laser = loadImage("https://i.ibb.co/ynnzchP/laser-Green05.png");
+    blue_laser = loadImage("https://i.ibb.co/g3MK6Wb/laser-Blue02.png");
     //---------------------------- Fondos --------------------------------
     fondo_clasico = loadImage("https://i.ibb.co/k9QBgj7/purple.png");
+    fondo_azul = loadImage("https://i.ibb.co/Bf9xbCQ/blue.png");
     fondo_espacio = loadImage("https://i.ibb.co/fdHfKS5/parallax-space-backgound.png");
     fondo_montana = loadImage("https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png");
+    //---------------------------- Banderas --------------------
+    bandera_spain = loadImage("https://i.ibb.co/KrrPTrb/bandera-spain.png");
+    bandera_usa = loadImage("https://i.ibb.co/3Rgmh5C/bandera-usa.png");
 }
 
 function setup(){
+    frameRate(30);
     juego = new Juego();
     let canvas = createCanvas(juego.largo,juego.ancho);
     canvas.parent("contenedor");
-    let fondo_juego = new Vue({
-    el: "#fondo_juego",
-    data: {
-        fondos : [
-        {tipo: fondo_clasico, valor: "https://i.ibb.co/k9QBgj7/purple.png", selected: true},
-        {tipo: fondo_espacio, valor: "https://i.ibb.co/fdHfKS5/parallax-space-backgound.png", selected: false},
-        {tipo: fondo_montana, valor: "https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png", selected: false}
-        ],
-    },
-    methods: {
-        elegir : function(boton,imagen){
-            let index = this.fondos.indexOf(boton);
-            for(let i = 0; i < this.fondos.length; i++){
-                if(i === index){
-                    this.fondos[index].selected = true;
-                }
-                else {
-                    this.fondos[i].selected = false;
-                }
+    
+    const messages = {
+        en: {
+            message: {
+                fondo: "background",
+                nave: "ship",
+                lenguaje: "language"
             }
-            juego.fondo = imagen;    
-        }    
+        },
+        es: {
+            message: {
+                fondo: "fondo",
+                nave: "nave",
+                lenguaje: "lenguaje"
+            }
+        }
     }
-})
+
+    // Create VueI18n instance with options
+    const i18n = new VueI18n({
+        locale: 'es', // set locale
+        messages, // set locale messages
+    })
+    
+        // Create a Vue instance with `i18n` option
+    let titulo_fondo = new Vue({ i18n }).$mount('#titulo_fondo');
+    let titulo_nave = new Vue({ i18n }).$mount('#titulo_nave');
+    let titulo_lenguaje = new Vue({ i18n }).$mount('#titulo_lenguaje');
+
+    let fondo_juego = new Vue({
+        el: "#fondo_juego",
+        data: {
+            fondos : [
+                {tipo: fondo_clasico, url: "https://i.ibb.co/k9QBgj7/purple.png", selected: true},
+                {tipo: fondo_espacio, url: "https://i.ibb.co/fdHfKS5/parallax-space-backgound.png",selected: false},
+                {tipo: fondo_montana, url: "https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png", selected: false},
+                {tipo: fondo_azul,    url: "https://i.ibb.co/Bf9xbCQ/blue.png", selected: false}
+            ]
+        },
+        methods: {
+            elegir : function(boton,imagen){
+                let index = this.fondos.indexOf(boton);
+                for(let i = 0; i < this.fondos.length; i++){
+                    if(i === index){
+                        this.fondos[index].selected = true;
+                    }
+                    else {
+                        this.fondos[i].selected = false;
+                    }
+                }
+                juego.fondo = imagen;    
+            }    
+        }
+    })
+
+    let imagen_nave = new Vue({
+        el: "#nave_imagen",
+        data: {
+            naves : [
+            {tipo: red_ship, url: "https://i.ibb.co/qWjf46n/player-Ship1-red.png", 
+            laser : red_laser,selected: true},
+            {tipo: blue_ship, url: "https://i.ibb.co/bbZ81dY/player-Ship1-blue.png",
+            laser : blue_laser,selected: false},
+            {tipo: green_ship, url: "https://i.ibb.co/GJghyz2/player-Ship1-green.png", 
+            laser : green_laser,selected: false},
+            // {tipo: orange_ship, url: "https://i.ibb.co/GWXtQCf/player-Ship1-orange.png", 
+            // laser : ,selected: false}
+            ],
+        },
+        methods: {
+            elegir : function(boton,imagen,laser){
+                let index = this.naves.indexOf(boton);
+                for(let i = 0; i < this.naves.length; i++){
+                    if(i === index){
+                        this.naves[index].selected = true;
+                    }
+                    else {
+                        this.naves[i].selected = false;
+                    }
+                }
+                juego.nave_img = imagen;   
+                juego.nave_laser = laser;
+            }    
+        }
+    })
+    
+    let lenguaje_juego = new Vue({
+        el: "#lenguajes_juego",
+        data: {
+            idiomas : [
+                {tipo: bandera_spain, url: "https://i.ibb.co/KrrPTrb/bandera-spain.png", selected: true, valor: "es"},
+                {tipo: bandera_usa, url: "https://i.ibb.co/3Rgmh5C/bandera-usa.png", selected: false, valor: "en"},
+            ],
+        },
+        methods: {
+            elegir : function(boton,idioma){
+                let index = this.idiomas.indexOf(boton);
+                for(let i = 0; i < this.idiomas.length; i++){
+                    if(i === index){
+                        this.idiomas[index].selected = true;
+                    }
+                    else {
+                        this.idiomas[i].selected = false;
+                    }
+                }
+                console.log(idioma);
+                i18n.locale = idioma;
+            }  
+        },
+    })
+        
 }
 
 function draw(){
