@@ -2,24 +2,22 @@ class Juego{
     constructor(){
         this.largo = 400;
         this.ancho = 350;
-        this.unidad = 30;
         this.velocidad = 3;
-        this.columnaenemigos = 5;
-        this.filadeenemigos = 3;
+        this.columna_enemigos = 5;
+        this.fila_enemigos = 3;
         this.balas = 2;
         this.puntuacion = 0;
         this.running = true;
         this.gameover = false;
-        this.direccion = false;
         this.disparo = false;
         this.empezar = false;
         this.musica = false;
         this.enemigos = [];
         this.nave_img = red_ship;
         this.nave_laser = red_laser;
-        this.fondo = fondo_clasico;
+        this.fondo = fondo_purpura;
+        this.modo = "classic";
         this.idioma = "es";
-        this.sonido = new Audio("http://k007.kiwi6.com/hotlink/7di9miccg9/sfx_laser1.ogg");
     }
 }
 
@@ -38,7 +36,7 @@ class Bala{
         image(this.imagen,this.x,this.y,this.largo,this.ancho);
     }
     update(){
-        this.dir ? this.y -= juego.velocidad : this.y += juego.velocidad;
+        this.dir === "arriba" ? this.y -= juego.velocidad : this.y += juego.velocidad;
         this.y < 0 || this.y > juego.ancho ? this.out = true : this.out = false;
     }
 }
@@ -46,10 +44,10 @@ class Bala{
 class Nave{
     constructor(){
         this.x = juego.largo / 2;
-        this.y = juego.ancho - juego.unidad;
+        this.y = juego.ancho - 30;
         this.dx = 0;
-        this.largo = juego.unidad;
-        this.ancho = juego.unidad;
+        this.largo = 30;
+        this.ancho = 30;
         this.balas = [];
         this.imagen = juego.nave_img;
         this.laser = juego.nave_laser;
@@ -63,10 +61,9 @@ class Nave{
     }
     disparar(){
         if(this.balas.length < juego.balas){
-            this.balas.push(new Bala((this.x + this.largo / 2),this.y - this.ancho,true,this.laser));
-            if(juego.musica){
-                juego.sonido.play();
-            }
+            let posX = this.x + this.largo / 2;
+            let posY = this.y - this.ancho;
+            this.balas.push(new Bala(posX,posY,"arriba",this.laser));
         }   
     }
 }
@@ -75,19 +72,19 @@ class Enemigo{
     constructor(x,y){
         this.x = x;
         this.y = y;
-        this.largo = juego.unidad;
-        this.ancho = juego.unidad;
-        this.caer = 10;
-        this.puntaje = 0;
+        this.largo = 30;
+        this.ancho = 30;
+        this.puntaje = 1;
         this.balas = [];
         this.imagen = green_enemy;
         this.laser = green_laser;
+        this.direccion = "derecha";
     }
     show(){
         image(this.imagen,this.x,this.y,this.largo,this.ancho);
     }
     update(){
-        if (juego.direccion === true){
+        if (this.direccion === "derecha"){
             this.x += juego.velocidad;
         }
         else{
@@ -96,11 +93,21 @@ class Enemigo{
     }
     disparar(){
         if(this.balas.length < juego.balas){
-            this.balas.push(new Bala((this.x + this.largo / 2),this.y + this.ancho,false,this.laser));
-            if(juego.musica){
-                juego.sonido.play();
-            }
+            let posX = this.x + this.largo / 2;
+            let posY = this.y + this.ancho;
+            this.balas.push(new Bala(posX,posY,"abajo",this.laser));
         }   
+    }
+    caer(){
+        this.y += 10;
+    }
+    cambiar_direccion(){
+        if(this.direccion === "derecha"){
+            this.direccion = "izquierda";
+        }
+        else if(this.direccion === "izquierda"){
+            this.direccion = "derecha";
+        }
     }
 }
 
@@ -119,6 +126,28 @@ class Enemigo_comodin extends Enemigo {
         this.laser = blue_laser;
         this.comodin = true;
         this.puntaje = 10;
+    }
+}
+
+class Fondo {
+    constructor(){
+        this.x = 0;
+        this.y = 0;
+        this.largo = juego.largo;
+        this.ancho = juego.ancho;
+        this.dx = 0;
+        this.dy = 0;
+    }
+    show(){
+        image(juego.fondo,this.x,this.y,juego.largo,juego.ancho);    
+        image(juego.fondo,this.x,this.y - juego.ancho,juego.largo,juego.ancho);
+    }
+    update(){
+        this.x += this.dx;
+        this.y += this.dy;
+        if(this.y > juego.ancho){
+            this.y = 0;
+        }
     }
 }
 
@@ -144,16 +173,25 @@ function rebotar_enemigos(){
     let primero = juego.enemigos[0];
     let ultimo = juego.enemigos[juego.enemigos.length - 1];
     
-    if(primero.x < 0 || ultimo.x + ultimo.largo > juego.largo){
-        juego.direccion = !juego.direccion;
-        descender_enemigos();
+    if(juego.modo === "classic"){
+        if(primero.x < 0 || ultimo.x + ultimo.largo > juego.largo){
+            for(let i in juego.enemigos){
+                let enemigo = juego.enemigos[i];
+                enemigo.cambiar_direccion();
+                enemigo.caer();
+            }
+        }
     }
-}
-
-function descender_enemigos(){
-    for (let i in juego.enemigos){
-        juego.enemigos[i].y += juego.enemigos[i].caer;
+    else if(juego.modo === "scroller"){
+        for(let i in juego.enemigos){
+            let enemigo = juego.enemigos[i];
+            if(enemigo.x < 0 || enemigo.x + enemigo.largo > juego.largo){
+                enemigo.cambiar_direccion();
+                enemigo.caer();
+            }
+        }
     }
+    
 }
 
 function disparo_enemigos(){
@@ -165,9 +203,8 @@ function disparo_enemigos(){
 }
 
 function crear_enemigos(){
-    for(let j = 0; j < juego.filadeenemigos;j++){
-        for(let i = 0; i < juego.columnaenemigos;i++){
-            
+    for(let j = 0; j < juego.fila_enemigos;j++){
+        for(let i = 0; i < juego.columna_enemigos;i++){
             let x = i * 40;
             let y = j * 34;
             comodin = Math.floor(random(0,2));
@@ -187,8 +224,10 @@ function crear_enemigos(){
 function destruir_enemigo(i,j){
     let bala = nave.balas[j];
     let enemy = juego.enemigos[i];
+    let enemy_largo = enemy.x + enemy.largo;
+    let enemy_ancho = enemy.y + enemy.ancho;
     
-    if(bala.x > enemy.x && bala.x < enemy.x + enemy.largo && bala.y > enemy.y && bala.y < enemy.y + enemy.ancho){
+    if(bala.x > enemy.x && bala.x < enemy_largo && bala.y > enemy.y && bala.y < enemy_ancho){
         juego.puntuacion += enemy.puntaje;
         return true;  
     }
@@ -216,28 +255,53 @@ function manejar_jugador(){
 }
 
 function manejar_enemigos(){
-    for(let i in juego.enemigos){
-        juego.enemigos[i].show();
-        juego.enemigos[i].update();
-        if(choque_jugador(i)){
-            juego.gameover = true;
-        }
-        for(let k in juego.enemigos[i].balas){
-            juego.enemigos[i].balas[k].show();
-            juego.enemigos[i].balas[k].update();
-            if(destruir_jugador(k,i)){
-                juego.gameover = true;
-            }
-        }
-    }
-
     if(juego.enemigos.length > 0){
         rebotar_enemigos();
         disparo_enemigos();
     }
-    else{
+
+    else {
+        nave.balas = [];
+    }
+
+    if(juego.enemigos.length === 0 && juego.modo === "classic"){
         crear_nivel()
     }
+    
+    for(let i in juego.enemigos){
+        let enemigo = juego.enemigos[i];
+        
+        enemigo.show();
+        enemigo.update();
+        
+        if(choque_jugador(i)){
+            juego.gameover = true;
+        }
+        
+        for(let k in enemigo.balas){
+            enemigo.balas[k].show();
+            enemigo.balas[k].update();
+            if(destruir_jugador(k,i)){
+                juego.gameover = true;
+            }
+        }
+        
+    }
+    
+    if(juego.modo === "scroller"){
+        if(frameCount % 30 === 0){
+            let posX = Math.floor(random(10,juego.largo - 30)); 
+            let posY = 0; 
+    
+            enemigo = new Enemigo(posX,posY);
+            juego.enemigos.push(enemigo);
+        }
+    }
+}
+
+function manejar_fondo(){
+    fondo.show();    
+    fondo.update();
 }
 //-------------------------------------------------------------------
 function empezar_juego(){
@@ -245,10 +309,11 @@ function empezar_juego(){
     const div_canvas = document.getElementById("contenedor");
     const div_botones = document.getElementById("botones");
     const div_config = document.getElementById("configuraciones");
+    const juego_modo = document.querySelector(".modo_juego:checked").value;
     
     juego.empezar = true;
     juego.gameover = false;
-    
+    juego.modo = juego_modo;
     
     div_menu.style.display = "none";
     div_botones.style.display = "inline-block";
@@ -260,7 +325,13 @@ function empezar_juego(){
     juego.puntuacion = 0;
     juego.enemigos.length = 0;
     
-    crear_enemigos();
+    if(juego.modo === "scroller"){
+        fondo.dy = 3;
+    } else {
+        crear_enemigos();
+        fondo.dx = 0; 
+    }
+    
 }
 
 function pantalla_pausa(){
@@ -324,8 +395,10 @@ function choque_jugador(i){
 
 function destruir_jugador(i,k){
     let bala = juego.enemigos[k].balas[i];
+    let nave_largo = nave.x + nave.largo;
+    let nave_ancho = nave.y + nave.ancho;
     
-    if(bala.x > nave.x && bala.x < nave.x + nave.largo && bala.y > nave.y && bala.y < nave.y + nave.ancho){
+    if(bala.x > nave.x && bala.x < nave_largo && bala.y > nave.y && bala.y < nave_ancho){
         return true;  
     }
 }
@@ -335,7 +408,10 @@ function crear_nivel(){
 }
 
 function actualizar(){
-    image(juego.fondo,0,0,juego.largo,juego.ancho);
+    let posX = juego.largo / 2;
+    let posY = juego.ancho / 2;
+    
+    manejar_fondo();
     textFont("ArcadeClassicRegular");
     if(!juego.gameover){
         if(juego.running){
@@ -346,13 +422,13 @@ function actualizar(){
         }
         else{
             textAlign(CENTER);
-            text("En pausa",juego.largo / 2,juego.ancho / 2);
+            text("En pausa",posX,posY);
         }
     }
     else{
         textAlign(CENTER);
-        text("Perdio ",juego.largo / 2,juego.ancho / 2);
-        text("Puntuacion " + juego.puntuacion,juego.largo / 2,juego.ancho / 2 + 20);
+        text("Perdio ",posX,posY);
+        text("Puntuacion " + juego.puntuacion,posX,posY + 20);
     }
 }
 //--------------------------------------------------------------------
@@ -410,18 +486,21 @@ function preload(){
     green_laser = loadImage("https://i.ibb.co/ynnzchP/laser-Green05.png");
     blue_laser = loadImage("https://i.ibb.co/g3MK6Wb/laser-Blue02.png");
     //---------------------------- Fondos --------------------------------
-    fondo_clasico = loadImage("https://i.ibb.co/k9QBgj7/purple.png");
+    fondo_purpura = loadImage("https://i.ibb.co/k9QBgj7/purple.png");
     fondo_azul = loadImage("https://i.ibb.co/Bf9xbCQ/blue.png");
-    fondo_espacio = loadImage("https://i.ibb.co/fdHfKS5/parallax-space-backgound.png");
-    fondo_montana = loadImage("https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png");
+    fondo_negro = loadImage("https://i.ibb.co/qxPqrNN/black.png");
+    fondo_oscuro = loadImage("https://i.ibb.co/m9NLVsr/dark-Purple.png");
     //---------------------------- Banderas --------------------
     bandera_spain = loadImage("https://i.ibb.co/KrrPTrb/bandera-spain.png");
     bandera_usa = loadImage("https://i.ibb.co/3Rgmh5C/bandera-usa.png");
+    bandera_brazil = loadImage("https://i.ibb.co/W3xq8nn/bandera-brazil.png");
+    bandera_italy = loadImage("https://i.ibb.co/8s0hnrM/bandera-italy.png");
 }
 
 function setup(){
     frameRate(30);
     juego = new Juego();
+    fondo = new Fondo();
     let canvas = createCanvas(juego.largo,juego.ancho);
     canvas.parent("contenedor");
     
@@ -430,15 +509,33 @@ function setup(){
             message: {
                 fondo: "background",
                 nave: "ship",
-                lenguaje: "language"
+                lenguaje: "language",
+                modo: "mode"
             }
         },
         es: {
             message: {
                 fondo: "fondo",
                 nave: "nave",
-                lenguaje: "lenguaje"
+                lenguaje: "lenguaje",
+                modo: "modo"
             }
+        },
+        pr: {
+            message: {
+                fondo: "plano de fundo",
+                nave: "navio",
+                lenguaje: "idioma",
+                modo: "modo"
+            }
+        },
+        it: {
+            message: {
+                fondo: "sfondo",
+                nave: "nave",
+                lenguaje: "linguaggio",
+                modo: "modo"
+            }    
         }
     }
 
@@ -452,15 +549,16 @@ function setup(){
     let titulo_fondo = new Vue({ i18n }).$mount('#titulo_fondo');
     let titulo_nave = new Vue({ i18n }).$mount('#titulo_nave');
     let titulo_lenguaje = new Vue({ i18n }).$mount('#titulo_lenguaje');
+    let titulo_modo = new Vue({ i18n }).$mount('#titulo_modo');
 
     let fondo_juego = new Vue({
         el: "#fondo_juego",
         data: {
             fondos : [
-                {tipo: fondo_clasico, url: "https://i.ibb.co/k9QBgj7/purple.png", selected: true},
-                {tipo: fondo_espacio, url: "https://i.ibb.co/fdHfKS5/parallax-space-backgound.png",selected: false},
-                {tipo: fondo_montana, url: "https://i.ibb.co/2Z4wTJM/parallax-mountain-bg.png", selected: false},
-                {tipo: fondo_azul,    url: "https://i.ibb.co/Bf9xbCQ/blue.png", selected: false}
+                {tipo: fondo_purpura,url: "https://i.ibb.co/k9QBgj7/purple.png", selected: true},
+                {tipo: fondo_negro,url: "https://i.ibb.co/qxPqrNN/black.png",selected: false},
+                {tipo: fondo_oscuro,url: "https://i.ibb.co/m9NLVsr/dark-Purple.png", selected: false},
+                {tipo: fondo_azul,url: "https://i.ibb.co/Bf9xbCQ/blue.png", selected: false}
             ]
         },
         methods: {
@@ -483,14 +581,10 @@ function setup(){
         el: "#nave_imagen",
         data: {
             naves : [
-            {tipo: red_ship, url: "https://i.ibb.co/qWjf46n/player-Ship1-red.png", 
-            laser : red_laser,selected: true},
-            {tipo: blue_ship, url: "https://i.ibb.co/bbZ81dY/player-Ship1-blue.png",
-            laser : blue_laser,selected: false},
-            {tipo: green_ship, url: "https://i.ibb.co/GJghyz2/player-Ship1-green.png", 
-            laser : green_laser,selected: false},
-            // {tipo: orange_ship, url: "https://i.ibb.co/GWXtQCf/player-Ship1-orange.png", 
-            // laser : ,selected: false}
+    {tipo: red_ship, url: "https://i.ibb.co/qWjf46n/player-Ship1-red.png", laser : red_laser,selected: true},
+    {tipo: blue_ship, url: "https://i.ibb.co/bbZ81dY/player-Ship1-blue.png",laser : blue_laser,selected: false},
+    {tipo: green_ship, url: "https://i.ibb.co/GJghyz2/player-Ship1-green.png", laser : green_laser,selected: false},
+    {tipo: orange_ship, url: "https://i.ibb.co/GWXtQCf/player-Ship1-orange.png", laser : red_laser,selected: false}
             ],
         },
         methods: {
@@ -514,8 +608,10 @@ function setup(){
         el: "#lenguajes_juego",
         data: {
             idiomas : [
-                {tipo: bandera_spain, url: "https://i.ibb.co/KrrPTrb/bandera-spain.png", selected: true, valor: "es"},
-                {tipo: bandera_usa, url: "https://i.ibb.co/3Rgmh5C/bandera-usa.png", selected: false, valor: "en"},
+                {url: "https://i.ibb.co/KrrPTrb/bandera-spain.png", selected: true, valor: "es"},
+                {url: "https://i.ibb.co/3Rgmh5C/bandera-usa.png", selected: false, valor: "en"},
+                {url: "https://i.ibb.co/W3xq8nn/bandera-brazil.png", selected: false, valor: "pr"},
+                {url: "https://i.ibb.co/8s0hnrM/bandera-italy.png", selected: false, valor: "it"}
             ],
         },
         methods: {
@@ -529,12 +625,10 @@ function setup(){
                         this.idiomas[i].selected = false;
                     }
                 }
-                console.log(idioma);
                 i18n.locale = idioma;
             }  
         },
     })
-        
 }
 
 function draw(){
